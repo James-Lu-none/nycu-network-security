@@ -55,8 +55,16 @@ public class aeser {
             path = input.nextLine();
         }
         File dir = new File(path);
-        if (!dir.exists() || !dir.isDirectory()) {
-            System.out.println("Data directory does not exist or is not a directory.");
+        if (!dir.exists()) {
+            if (dir.mkdirs()) {
+                System.out.println("Data directory created: " + dir.getPath());
+            } else {
+                System.out.println("Failed to create data directory.");
+                return null;
+            }
+        }
+        if (!dir.isDirectory()) {
+            System.out.println("data path is not a directory.");
             return null;
         }
         return dir;
