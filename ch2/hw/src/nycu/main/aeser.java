@@ -93,44 +93,38 @@ public class aeser {
     }
 
 	public static void encryptor() {
-		String key;
-		File dataFile;
-		if (envKey != null) {
-			key = envKey;
-			System.out.println("Using key from environment variable.");
-		} else {
-			System.out.println("please input your key:");
-			System.out.println("Key should be 16, 24 or 32 characters long.");
-			key = input.nextLine();
-		}
-		if (dataFilePath != null) {
-			System.out.println("Using source file path from environment variable.");
-			dataFile = new File(dataFilePath);
-		} else {
-			System.out.println("please input file path:");
-			dataFilePath = input.nextLine();
-			dataFile = new File(dataFilePath);
-			if (!dataFile.exists()) {
-				System.out.println("Source file does not exist.");
-				dataFilePath = null;
-			}
-		}
-		File cipherFile = new File(cipherFilePath);
+        try {
+            String key = getAesKey();
+            if (key == null) return;
 
-		try {
-			// Read file content
-			byte[] fileBytes = java.nio.file.Files.readAllBytes(dataFile.toPath());
-			final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-			final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-			byte[] encrypted = cipher.doFinal(fileBytes);
-			// Write encrypted data to cipher file (Base64 encoded)
-			String encoded = Base64.getEncoder().encodeToString(encrypted);
-			java.nio.file.Files.write(cipherFile.toPath(), encoded.getBytes("UTF-8"));
-			System.out.println("Encryption complete. Encrypted data written to: " + cipherFile.getPath());
-		} catch (Exception e) {
-			System.out.println("Error: " + e.getMessage());
-		}
+            File dataDir = getDataDir();
+            File cipherDir = getCipherDir();
+            if (dataDir == null || cipherDir == null) return;
+
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            File[] files = dataDir.listFiles();
+            if (files == null) {
+                System.out.println("No files found in data directory.");
+                return;
+            }
+
+            for (File file : files) {
+                if (!file.isFile()) continue;
+
+                byte[] fileBytes = Files.readAllBytes(file.toPath());
+                byte[] encrypted = cipher.doFinal(fileBytes);
+                String encoded = Base64.getEncoder().encodeToString(encrypted);
+
+                File outFile = new File(cipherDir, file.getName() + ".enc");
+                Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
+                System.out.println("Encrypted: " + file.getName() + " -> " + outFile.getPath());
+            }
+        } catch (Exception e) {
+            System.out.println("Error during encryption: " + e.getMessage());
+        }
 	}
 
 	public static void decryptor() {
