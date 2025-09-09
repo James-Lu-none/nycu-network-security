@@ -22,7 +22,7 @@ public class aeser {
         System.out.println("1. Run AES encryptor");
         System.out.println("2. Run AES decryptor");
         System.out.println("Enter your choice: ");
-        String choice = input.nextLine();
+        final String choice = input.nextLine();
         switch (choice.charAt(0)) {
             case '1':
                 encryptor();
@@ -44,7 +44,7 @@ public class aeser {
             System.out.println("Enter data directory path:");
             path = input.nextLine();
         }
-        File file = new File(path);
+        final File file = new File(path);
         if (!file.exists()) {
 			if (file.isDirectory()) {
 				System.out.println("Cipher path is not a directory. Please delete it and try again.");
@@ -60,20 +60,20 @@ public class aeser {
 					System.out.println("Failed to create key file.");
 					return null;
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.out.println("Error creating key file: " + e.getMessage());
 				return null;
 			}
 		}
 		if (path != null) {
 			try {
-				byte[] keyBytes = Files.readAllBytes(file.toPath());
+				final byte[] keyBytes = Files.readAllBytes(file.toPath());
 				key = new String(keyBytes).trim();
 				if (!(key.length() == 16 || key.length() == 24 || key.length() == 32)) {
 					System.out.println("Key length is not 16, 24, or 32 characters.");
 					return null;
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.out.println("Failed to read key from file: " + e.getMessage());
 				return null;
 			}
@@ -83,11 +83,11 @@ public class aeser {
 
 	public static String generateRandomAesKey() {
 		try {
-			KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+			final KeyGenerator keyGen = KeyGenerator.getInstance("AES");
 			keyGen.init(128);
-			SecretKey secretKey = keyGen.generateKey();
+			final SecretKey secretKey = keyGen.generateKey();
 			return Base64.getEncoder().encodeToString(secretKey.getEncoded());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException("Error generating AES key", e);
 		}
 	}
@@ -98,7 +98,7 @@ public class aeser {
             System.out.println("Enter data directory path:");
             path = input.nextLine();
         }
-        File dir = new File(path);
+        final File dir = new File(path);
         if (!dir.exists()) {
             if (dir.mkdirs()) {
                 System.out.println("Data directory created: " + dir.getPath());
@@ -120,7 +120,7 @@ public class aeser {
             System.out.println("Enter cipher directory path:");
             path = input.nextLine();
         }
-        File dir = new File(path);
+        final File dir = new File(path);
         if (!dir.exists()) {
             if (dir.mkdirs()) {
                 System.out.println("Cipher directory created: " + dir.getPath());
@@ -138,67 +138,67 @@ public class aeser {
 
 	public static void encryptor() {
         try {
-            String key = getAesKey();
+            final String key = getAesKey();
             if (key == null) return;
 
-            File dataDir = getDataDir();
-            File cipherDir = getCipherDir();
+            final File dataDir = getDataDir();
+            final File cipherDir = getCipherDir();
             if (dataDir == null || cipherDir == null) return;
 
-            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-            File[] files = dataDir.listFiles();
+            final File[] files = dataDir.listFiles();
             if (files == null) {
                 System.out.println("No files found in data directory.");
                 return;
             }
 
-            for (File file : files) {
-                if (!file.isFile()) continue;
+			for (final File file : files) {
+				if (!file.isFile()) continue;
 
-                byte[] fileBytes = Files.readAllBytes(file.toPath());
-                byte[] encrypted = cipher.doFinal(fileBytes);
-                String encoded = Base64.getEncoder().encodeToString(encrypted);
+				final byte[] fileBytes = Files.readAllBytes(file.toPath());
+				final byte[] encrypted = cipher.doFinal(fileBytes);
+				final String encoded = Base64.getEncoder().encodeToString(encrypted);
 
-                File outFile = new File(cipherDir, file.getName() + ".enc");
-                Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
-                System.out.println("Encrypted: " + file.getName() + " -> " + outFile.getPath());
-            }
-        } catch (Exception e) {
-            System.out.println("Error during encryption: " + e.getMessage());
-        }
+				final File outFile = new File(cipherDir, file.getName() + ".enc");
+				Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
+				System.out.println("Encrypted: " + file.getName() + " -> " + outFile.getPath());
+			}
+		} catch (final Exception e) {
+			System.out.println("Error during encryption: " + e.getMessage());
+		}
 	}
 
 	public static void decryptor() {
-        try {
-            String key = getAesKey();
-            if (key == null) return;
+		try {
+			final String key = getAesKey();
+			if (key == null) return;
 
-            File cipherDir = getCipherDir();
-            File dataDir = getDataDir();
-            if (cipherDir == null || dataDir == null) return;
+			final File cipherDir = getCipherDir();
+			final File dataDir = getDataDir();
+			if (cipherDir == null || dataDir == null) return;
 
-            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+			final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+			final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
-            File[] files = cipherDir.listFiles();
-            if (files == null) {
-                System.out.println("No files found in cipher directory.");
-                return;
-            }
+			final File[] files = cipherDir.listFiles();
+			if (files == null) {
+				System.out.println("No files found in cipher directory.");
+				return;
+			}
 
-            for (File file : files) {
+            for (final File file : files) {
                 if (!file.isFile() || !file.getName().endsWith(".enc")) continue;
 
-                byte[] encodedBytes = Files.readAllBytes(file.toPath());
-                byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
-                byte[] decrypted = cipher.doFinal(encrypted);
+				final byte[] encodedBytes = Files.readAllBytes(file.toPath());
+				final byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
+				final byte[] decrypted = cipher.doFinal(encrypted);
 
-                String baseName = file.getName().replaceFirst("\\.enc$", "");
-                File outFile = new File(dataDir, baseName);
+                final String baseName = file.getName().replaceFirst("\\.enc$", "");
+                final File outFile = new File(dataDir, baseName);
                 Files.write(outFile.toPath(), decrypted);
                 System.out.println("Decrypted: " + file.getName() + " -> " + outFile.getPath());
             }
