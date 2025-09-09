@@ -2,6 +2,8 @@ package nycu.main;
 
 import java.util.Scanner;
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.io.File;
@@ -11,7 +13,7 @@ public class aeser {
 
     public static final Scanner input = new Scanner(System.in);
 
-	// System.getenv("AES_KEY");
+	// System.getenv("AES_KEY_FILE_PATH");
 	// System.getenv("AES_DATA_DIR");
 	// System.getenv("AES_CIPHER_DIR");
 
@@ -47,6 +49,17 @@ public class aeser {
         }
         return envKey;
     }
+
+	public static String generateRandomAesKey() {
+		try {
+			KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+			keyGen.init(128);
+			SecretKey secretKey = keyGen.generateKey();
+			return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+		} catch (Exception e) {
+			throw new RuntimeException("Error generating AES key", e);
+		}
+	}
 
     public static File getDataDir() {
         String path = System.getenv("AES_DATA_DIR");
