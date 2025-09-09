@@ -16,8 +16,8 @@ java -cp bin nycu.main.hasher
 
 ```
 export AES_KEY=1234123412341234
-export AES_DATA_FILE_PATH=a.txt
-export AES_CIPHER_FILE_PATH=output
+export AES_DATA_DIR=data
+export AES_CIPHER_DIR=cipher
 ```
 
 ## working java container
