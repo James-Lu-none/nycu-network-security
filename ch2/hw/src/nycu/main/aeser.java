@@ -41,13 +41,13 @@ public class aeser {
         String path = System.getenv("AES_KEY_FILE_PATH");
         String key = null;
         if (path == null) {
-            System.out.println("Enter data directory path:");
+            System.out.println("Enter AES key file path:");
             path = input.nextLine();
         }
         final File file = new File(path);
         if (!file.exists()) {
 			if (file.isDirectory()) {
-				System.out.println("Cipher path is not a directory. Please delete it and try again.");
+				System.out.println("Entered path is a directory. Please delete it and try again.");
 				return null;
 			}
 			try {
