@@ -15,7 +15,7 @@ java -cp bin nycu.main.hasher
 ## set up env
 
 ```
-export AES_KEY=1234123412341234
+export AES_KEY_FILE_PATH=key
 export AES_DATA_DIR=data
 export AES_CIPHER_DIR=cipher
 ```
