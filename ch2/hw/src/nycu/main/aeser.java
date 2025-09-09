@@ -128,27 +128,38 @@ public class aeser {
 	}
 
 	public static void decryptor() {
-		String key;
-		if (envKey != null) {
-			key = envKey;
-			System.out.println("Using key from environment variable.");
-		} else {
-			System.out.println("please input your key:");
-			System.out.println("Key should be 16, 24 or 32 characters long.");
-			key = input.nextLine();
-		}
-		System.out.println("please input your ciphertext:");
-		String ciphertext = input.nextLine();
+        try {
+            String key = getAesKey();
+            if (key == null) return;
 
-		try {
-			final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-			final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-			byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(ciphertext));
-			System.out.println("Decrypted data:");
-			System.out.println(new String(decrypted, "UTF-8"));
-		} catch (Exception e) {
-			System.out.println("Error: " + e.getMessage());
-		}
-	}
+            File cipherDir = getCipherDir();
+            File dataDir = getDataDir();
+            if (cipherDir == null || dataDir == null) return;
+
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+            File[] files = cipherDir.listFiles();
+            if (files == null) {
+                System.out.println("No files found in cipher directory.");
+                return;
+            }
+
+            for (File file : files) {
+                if (!file.isFile() || !file.getName().endsWith(".enc")) continue;
+
+                byte[] encodedBytes = Files.readAllBytes(file.toPath());
+                byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
+                byte[] decrypted = cipher.doFinal(encrypted);
+
+                String baseName = file.getName().replaceFirst("\\.enc$", "");
+                File outFile = new File(dataDir, baseName);
+                Files.write(outFile.toPath(), decrypted);
+                System.out.println("Decrypted: " + file.getName() + " -> " + outFile.getPath());
+            }
+        } catch (Exception e) {
+            System.out.println("Error during decryption: " + e.getMessage());
+        }
+    }
 }
