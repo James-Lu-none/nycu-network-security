@@ -13,9 +13,10 @@ public class aeser {
 
     public static final Scanner input = new Scanner(System.in);
 
-	// System.getenv("AES_KEY_FILE_PATH");
-	// System.getenv("AES_DATA_DIR");
-	// System.getenv("AES_CIPHER_DIR");
+	final static String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
+	final static String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
+	final static String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
+	final static int AES_KEY_LENGTH = 256;
 
     public static void main(String[] args) {
         System.out.println("Welcome to use NYCU AESer.");
@@ -38,7 +39,7 @@ public class aeser {
     }
 
     public static String getAesKey() {
-        String path = System.getenv("AES_KEY_FILE_PATH");
+        String path = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
         String key = null;
         if (path == null) {
             System.out.println("Enter AES key file path:");
@@ -84,7 +85,7 @@ public class aeser {
 	public static String generateRandomAesKey() {
 		try {
 			final KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-			keyGen.init(128);
+			keyGen.init(AES_KEY_LENGTH);
 			final SecretKey secretKey = keyGen.generateKey();
 			return Base64.getEncoder().encodeToString(secretKey.getEncoded());
 		} catch (final Exception e) {
@@ -93,7 +94,7 @@ public class aeser {
 	}
 
     public static File getDataDir() {
-        String path = System.getenv("AES_DATA_DIR");
+        String path = System.getenv(AES_DATA_DIR_ENV_NAME);
         if (path == null) {
             System.out.println("Enter data directory path:");
             path = input.nextLine();
@@ -115,7 +116,7 @@ public class aeser {
     }
 
     public static File getCipherDir() {
-        String path = System.getenv("AES_CIPHER_DIR");
+        String path = System.getenv(AES_CIPHER_DIR_ENV_NAME);
         if (path == null) {
             System.out.println("Enter cipher directory path:");
             path = input.nextLine();
