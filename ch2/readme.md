@@ -20,3 +20,8 @@ export AES_SRC_FILE_PATH=a.txt
 export AES_DST_FILE_PATH=output
 ```
 
+## working java container
+
+```
+docker run -v ./hw:/app/hw -it openjdk:21-jdk-slim bash
+```
