@@ -38,16 +38,47 @@ public class aeser {
     }
 
     public static String getAesKey() {
-        String envKey = System.getenv("AES_KEY");
-        if (envKey == null) {
-            System.out.println("Please input your key (16, 24, or 32 characters):");
-            envKey = input.nextLine();
+        String path = System.getenv("AES_KEY_FILE_PATH");
+        String key = null;
+        if (path == null) {
+            System.out.println("Enter data directory path:");
+            path = input.nextLine();
         }
-        if (envKey.length() != 16 && envKey.length() != 24 && envKey.length() != 32) {
-            System.out.println("Invalid key length. Must be 16, 24, or 32 characters.");
-            return null;
-        }
-        return envKey;
+        File file = new File(path);
+        if (!file.exists()) {
+			if (file.isDirectory()) {
+				System.out.println("Cipher path is not a directory. Please delete it and try again.");
+				return null;
+			}
+			try {
+				System.out.println("Key file not found. Generating new key file at: " + file.getPath());
+				if (file.createNewFile()) {
+					key = generateRandomAesKey();
+					Files.write(file.toPath(), key.getBytes());
+					System.out.println("Key file generated.");
+				} else {
+					System.out.println("Failed to create key file.");
+					return null;
+				}
+			} catch (Exception e) {
+				System.out.println("Error creating key file: " + e.getMessage());
+				return null;
+			}
+		}
+		if (path != null) {
+			try {
+				byte[] keyBytes = Files.readAllBytes(file.toPath());
+				key = new String(keyBytes).trim();
+				if (!(key.length() == 16 || key.length() == 24 || key.length() == 32)) {
+					System.out.println("Key length is not 16, 24, or 32 characters.");
+					return null;
+				}
+			} catch (Exception e) {
+				System.out.println("Failed to read key from file: " + e.getMessage());
+				return null;
+			}
+		}
+        return key;
     }
 
 	public static String generateRandomAesKey() {
