@@ -29,7 +29,7 @@ public class AesGui extends JFrame {
 
     public AesGui() {
         initializeGUI();
-        loadEnvironmentVariables();
+        checkAndUpdateEnvironmentVariables();
     }
 
     // ================= GUI 相關方法 =================
@@ -57,10 +57,6 @@ public class AesGui extends JFrame {
         mainPanel.add(logPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
-    }
-    
-    private void loadEnvironmentVariables() {
-        checkAndUpdateEnvironmentVariables();
     }
 
     private JPanel createConfigPanel() {
