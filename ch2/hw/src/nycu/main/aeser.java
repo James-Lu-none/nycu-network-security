@@ -2,8 +2,9 @@ package nycu.main;
 
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
-import static nycu.core.AesCore.*;
+
 import nycu.ui.AesGui;
+import nycu.ui.AesTui;
 
 public class aeser {
 
@@ -27,10 +28,10 @@ public class aeser {
         final String choice = input.nextLine();
         switch (choice.charAt(0)) {
             case '1':
-                encryptor();
+                AesTui.encryptor();
                 break;
             case '2':
-                decryptor();
+                AesTui.decryptor();
                 break;
             default:
                 System.out.println("Unknown choice.");
