@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import static nycu.core.AesCore.*;
-
 public class AesGui extends JFrame {
 
     // all your UI components here
@@ -29,24 +28,24 @@ public class AesGui extends JFrame {
         checkAndUpdateEnvironmentVariables();
     }
 
-    // ================= GUI 相關方法 =================
+    // ================= GUI related methods =================
     private void initializeGUI() {
         setTitle("NYCU AESer - GUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
 
-        // 主要面板
+        // Main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // 頂部配置面板
+        // Top config panel
         JPanel configPanel = createConfigPanel();
 
-        // 中間按鈕面板
+        // Middle button panel
         JPanel buttonPanel = createButtonPanel();
 
-        // 底部日誌面板
+        // Bottom log panel
         JPanel logPanel = createLogPanel();
 
         mainPanel.add(configPanel, BorderLayout.NORTH);
@@ -58,7 +57,7 @@ public class AesGui extends JFrame {
 
     private JPanel createConfigPanel() {
         JPanel configPanel = new JPanel(new GridBagLayout());
-        configPanel.setBorder(BorderFactory.createTitledBorder("配置設定"));
+        configPanel.setBorder(BorderFactory.createTitledBorder("Configuration"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
@@ -66,7 +65,7 @@ public class AesGui extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        configPanel.add(new JLabel("AES 金鑰檔案:"), gbc);
+        configPanel.add(new JLabel("AES Key File:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -77,7 +76,7 @@ public class AesGui extends JFrame {
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton browseKeyButton = new JButton("瀏覽");
+        JButton browseKeyButton = new JButton("Browse");
         browseKeyButton.addActionListener(e -> browseForKeyFile());
         configPanel.add(browseKeyButton, gbc);
 
@@ -85,7 +84,7 @@ public class AesGui extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        configPanel.add(new JLabel("資料目錄:"), gbc);
+        configPanel.add(new JLabel("Data Directory:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -96,15 +95,15 @@ public class AesGui extends JFrame {
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton browseDataButton = new JButton("瀏覽");
-        browseDataButton.addActionListener(e -> browseForDirectory(dataDirField, "選擇資料目錄"));
+        JButton browseDataButton = new JButton("Browse");
+        browseDataButton.addActionListener(e -> browseForDirectory(dataDirField, "Select Data Directory"));
         configPanel.add(browseDataButton, gbc);
 
         // Cipher Directory
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
-        configPanel.add(new JLabel("加密檔案目錄:"), gbc);
+        configPanel.add(new JLabel("Cipher Directory:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -115,22 +114,22 @@ public class AesGui extends JFrame {
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton browseCipherButton = new JButton("瀏覽");
-        browseCipherButton.addActionListener(e -> browseForDirectory(cipherDirField, "選擇加密檔案目錄"));
+        JButton browseCipherButton = new JButton("Browse");
+        browseCipherButton.addActionListener(e -> browseForDirectory(cipherDirField, "Select Cipher Directory"));
         configPanel.add(browseCipherButton, gbc);
 
         // Environment Variables Status and Control
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
-        configPanel.add(new JLabel("環境變數:"), gbc);
+        configPanel.add(new JLabel("Environment Variables:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         JPanel envPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-        useEnvVarsCheckBox = new JCheckBox("自動使用環境變數");
+        useEnvVarsCheckBox = new JCheckBox("Auto Use Environment Variables");
         useEnvVarsCheckBox.addActionListener(e -> toggleEnvironmentVariables());
         envPanel.add(useEnvVarsCheckBox);
 
@@ -143,7 +142,7 @@ public class AesGui extends JFrame {
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton refreshEnvButton = new JButton("重新檢測");
+        JButton refreshEnvButton = new JButton("Refresh");
         refreshEnvButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         refreshEnvButton.addActionListener(e -> checkAndUpdateEnvironmentVariables());
         configPanel.add(refreshEnvButton, gbc);
@@ -152,36 +151,36 @@ public class AesGui extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.WEST;
-        configPanel.add(new JLabel("金鑰長度:"), gbc);
+        configPanel.add(new JLabel("Key Length:"), gbc);
 
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        keyLengthComboBox = new JComboBox<>(new String[]{"16 字元", "24 字元", "32 字元"});
-        keyLengthComboBox.setSelectedIndex(2); // 預設選擇 32 字元
+        keyLengthComboBox = new JComboBox<>(new String[]{"16 chars", "24 chars", "32 chars"});
+        keyLengthComboBox.setSelectedIndex(2); // Default to 32 chars
         configPanel.add(keyLengthComboBox, gbc);
 
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        configPanel.add(new JLabel(""), gbc); // 空白標籤保持對齊
+        configPanel.add(new JLabel(""), gbc); // Empty label for alignment
 
         return configPanel;
     }
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.setBorder(BorderFactory.createTitledBorder("操作"));
+        buttonPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
 
-        encryptButton = new JButton("加密檔案");
+        encryptButton = new JButton("Encrypt Files");
         encryptButton.setPreferredSize(new Dimension(120, 40));
         encryptButton.addActionListener(new EncryptActionListener());
 
-        decryptButton = new JButton("解密檔案");
+        decryptButton = new JButton("Decrypt Files");
         decryptButton.setPreferredSize(new Dimension(120, 40));
         decryptButton.addActionListener(new DecryptActionListener());
 
-        JButton generateKeyButton = new JButton("產生新金鑰");
+        JButton generateKeyButton = new JButton("Generate Key");
         generateKeyButton.setPreferredSize(new Dimension(120, 40));
         generateKeyButton.addActionListener(e -> generateNewKey());
 
@@ -194,7 +193,7 @@ public class AesGui extends JFrame {
 
     private JPanel createLogPanel() {
         JPanel logPanel = new JPanel(new BorderLayout());
-        logPanel.setBorder(BorderFactory.createTitledBorder("操作日誌"));
+        logPanel.setBorder(BorderFactory.createTitledBorder("Log"));
 
         logArea = new JTextArea(10, 50);
         logArea.setEditable(false);
@@ -203,14 +202,14 @@ public class AesGui extends JFrame {
         JScrollPane scrollPane = new JScrollPane(logArea);
         logPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JButton clearLogButton = new JButton("清除日誌");
+        JButton clearLogButton = new JButton("Clear Log");
         clearLogButton.addActionListener(e -> logArea.setText(""));
         logPanel.add(clearLogButton, BorderLayout.SOUTH);
 
         return logPanel;
     }
 
-    // 檢查並更新環境變數狀態
+    // Check and update environment variable status
     private void checkAndUpdateEnvironmentVariables() {
         String keyPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
         String dataDir = System.getenv(AES_DATA_DIR_ENV_NAME);
@@ -227,31 +226,31 @@ public class AesGui extends JFrame {
             envCount++;
         }
 
-        // 更新狀態標籤
+        // Update status label
         if (envCount == 3) {
-            envStatusLabel.setText("（3/3✓）");
-            envStatusLabel.setForeground(new Color(0, 128, 0)); // 綠色
+            envStatusLabel.setText("(3/3✓)");
+            envStatusLabel.setForeground(new Color(0, 128, 0)); // Green
             useEnvVarsCheckBox.setSelected(true);
-            appendLog("檢測到完整的環境變數設定");
+            appendLog("Detected all environment variables set");
         } else if (envCount > 0) {
-            envStatusLabel.setText("（" + envCount + "/3）");
-            envStatusLabel.setForeground(new Color(255, 140, 0)); // 橙色
+            envStatusLabel.setText("(" + envCount + "/3)");
+            envStatusLabel.setForeground(new Color(255, 140, 0)); // Orange
             useEnvVarsCheckBox.setSelected(false);
-            appendLog("檢測到部分環境變數設定 (" + envCount + "/3)");
+            appendLog("Detected partial environment variables set (" + envCount + "/3)");
         } else {
-            envStatusLabel.setText("（0/3）");
+            envStatusLabel.setText("(0/3)");
             envStatusLabel.setForeground(Color.RED);
             useEnvVarsCheckBox.setSelected(false);
-            appendLog("未檢測到環境變數設定");
+            appendLog("No environment variables detected");
         }
 
-        // 如果勾選框被選中，則自動填入環境變數
+        // If checkbox is selected, auto fill from env vars
         if (useEnvVarsCheckBox.isSelected()) {
             applyEnvironmentVariables();
         }
     }
 
-    // 套用環境變數到輸入欄位
+    // Apply environment variables to input fields
     private void applyEnvironmentVariables() {
         String keyPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
         String dataDir = System.getenv(AES_DATA_DIR_ENV_NAME);
@@ -267,17 +266,17 @@ public class AesGui extends JFrame {
             cipherDirField.setText(cipherDir);
         }
 
-        appendLog("已套用環境變數設定到輸入欄位");
+        appendLog("Applied environment variable settings to input fields");
     }
 
-    // 切換環境變數使用狀態
+    // Toggle environment variable usage
     private void toggleEnvironmentVariables() {
         if (useEnvVarsCheckBox.isSelected()) {
-            // 使用者選擇使用環境變數
+            // User chooses to use env vars
             int confirm = JOptionPane.showConfirmDialog(
                     this,
-                    "是否要用環境變數覆蓋目前的輸入欄位內容？",
-                    "確認使用環境變數",
+                    "Do you want to overwrite current input fields with environment variables?",
+                    "Confirm Use of Environment Variables",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE
             );
@@ -288,37 +287,37 @@ public class AesGui extends JFrame {
                 useEnvVarsCheckBox.setSelected(false);
             }
         } else {
-            // 使用者選擇不使用環境變數
-            appendLog("已停用環境變數自動載入，將使用手動輸入的路徑");
+            // User chooses not to use env vars
+            appendLog("Disabled auto-loading of environment variables, will use manual input paths");
         }
     }
 
-    // 獲取有效的金鑰檔案路徑（優先使用使用者輸入，其次環境變數）
+    // Get effective key file path (prefer user input, then env var)
     private String getEffectiveKeyPath() {
         String userInput = keyFilePathField.getText().trim();
 
-        // 如果使用者有輸入且不是從環境變數來的，優先使用使用者輸入
+        // If user input exists and is not from env var, prefer user input
         if (!userInput.isEmpty()) {
             String envPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
             if (envPath == null || !userInput.equals(envPath)) {
-                appendLog("使用使用者指定的金鑰路徑: " + userInput);
+                appendLog("Using user-specified key path: " + userInput);
                 return userInput;
             }
         }
 
-        // 如果勾選使用環境變數且環境變數存在
+        // If checkbox is selected and env var exists
         if (useEnvVarsCheckBox.isSelected()) {
             String envPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
             if (envPath != null && !envPath.trim().isEmpty()) {
-                appendLog("使用環境變數金鑰路徑: " + envPath);
+                appendLog("Using environment variable key path: " + envPath);
                 return envPath;
             }
         }
 
-        return userInput; // 回傳使用者輸入（可能為空）
+        return userInput; // May be empty
     }
 
-    // 獲取有效的資料目錄路徑
+    // Get effective data directory path
     private String getEffectiveDataDir() {
         String userInput = dataDirField.getText().trim();
 
@@ -339,7 +338,7 @@ public class AesGui extends JFrame {
         return userInput;
     }
 
-    // 獲取有效的加密檔案目錄路徑
+    // Get effective cipher directory path
     private String getEffectiveCipherDir() {
         String userInput = cipherDirField.getText().trim();
 
@@ -362,7 +361,7 @@ public class AesGui extends JFrame {
 
     private void browseForKeyFile() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("選擇 AES 金鑰檔案");
+        fileChooser.setDialogTitle("Select AES Key File");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -383,12 +382,12 @@ public class AesGui extends JFrame {
     private void generateNewKey() {
         String keyPath = keyFilePathField.getText().trim();
         if (keyPath.isEmpty()) {
-            appendLog("錯誤: 請先指定金鑰檔案路徑");
+            appendLog("Error: Please specify key file path first");
             return;
         }
 
         try {
-            // 取得選擇的金鑰長度
+            // Get selected key length
             int selectedIndex = keyLengthComboBox.getSelectedIndex();
             int keyLength;
             switch (selectedIndex) {
@@ -409,24 +408,24 @@ public class AesGui extends JFrame {
             File keyFile = new File(keyPath);
             String key = generateRandomAesKey(keyLength);
             Files.write(keyFile.toPath(), key.getBytes());
-            appendLog("已產生 " + keyLength + " 字元金鑰並儲存至: " + keyPath);
-            appendLog("金鑰內容: " + key);
+            appendLog("Generated " + keyLength + "-bit key and saved to: " + keyPath);
+            appendLog("Key content: " + key);
         } catch (Exception e) {
-            appendLog("產生金鑰時發生錯誤: " + e.getMessage());
+            appendLog("Error generating key: " + e.getMessage());
         }
     }
 
-    // GUI 版本的金鑰取得方法
+    // GUI version of key retrieval
     private String getAesKeyGUI() {
         String keyPath = getEffectiveKeyPath();
         if (keyPath.isEmpty()) {
-            appendLog("錯誤: 請指定 AES 金鑰檔案路徑");
+            appendLog("Error: Please specify AES key file path");
             return null;
         }
 
         File file = new File(keyPath);
         if (!file.exists()) {
-            appendLog("錯誤: 金鑰檔案不存在: " + keyPath);
+            appendLog("Error: Key file does not exist: " + keyPath);
             return null;
         }
 
@@ -434,16 +433,16 @@ public class AesGui extends JFrame {
             byte[] keyBytes = Files.readAllBytes(file.toPath());
             String key = new String(keyBytes).trim();
 
-            // 檢查金鑰長度
+            // Check key length
             if (!(key.length() == 16 || key.length() == 24 || key.length() == 32)) {
-                appendLog("錯誤: 金鑰長度必須是 16、24 或 32 個字元，目前長度: " + key.length());
+                appendLog("Error: Key length must be 16, 24, or 32 characters, current length: " + key.length());
                 return null;
             }
 
-            appendLog("成功讀取金鑰，長度: " + key.length() + " 字元");
+            appendLog("Successfully read key, length: " + key.length() + " characters");
             return key;
         } catch (Exception e) {
-            appendLog("讀取金鑰檔案時發生錯誤: " + e.getMessage());
+            appendLog("Error reading key file: " + e.getMessage());
             return null;
         }
     }
@@ -455,7 +454,7 @@ public class AesGui extends JFrame {
         });
     }
 
-    // 加密按鈕事件處理
+    // Encrypt button event handler
     private class EncryptActionListener implements ActionListener {
 
         @Override
@@ -477,15 +476,15 @@ public class AesGui extends JFrame {
                 File dataDir = new File(getEffectiveDataDir());
 
                 int count = encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
-                appendLog("加密完成! 共處理 " + count + " 個檔案");
+                appendLog("Encryption finished! Total " + count + " file(s) processed.");
 
             } catch (Exception ex) {
-                appendLog("加密過程中發生錯誤: " + ex.getMessage());
+                appendLog("Error during encryption: " + ex.getMessage());
             }
         }
     }
 
-    // 解密按鈕事件處理
+    // Decrypt button event handler
     private class DecryptActionListener implements ActionListener {
 
         @Override
@@ -507,10 +506,10 @@ public class AesGui extends JFrame {
                 File dataDir = new File(getEffectiveDataDir());
 
                 int count = decryptFiles(key, cipherDir, dataDir, AesGui.this::appendLog);
-                appendLog("解密完成! 共處理 " + count + " 個檔案");
+                appendLog("Decryption finished! Total " + count + " file(s) processed.");
 
             } catch (Exception ex) {
-                appendLog("解密過程中發生錯誤: " + ex.getMessage());
+                appendLog("Error during decryption: " + ex.getMessage());
             }
         }
     }
