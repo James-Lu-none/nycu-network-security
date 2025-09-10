@@ -476,58 +476,11 @@ public class AesGui extends JFrame {
         private void performEncryption() {
             try {
                 String key = getAesKeyGUI();
-                if (key == null) {
-                    return;
-                }
+                File cipherDir = new File(getEffectiveCipherDir());
+                File dataDir = new File(getEffectiveDataDir());
 
-                String dataPath = getEffectiveDataDir();
-                String cipherPath = getEffectiveCipherDir();
-
-                if (dataPath.isEmpty() || cipherPath.isEmpty()) {
-                    appendLog("錯誤: 請指定資料目錄和加密檔案目錄");
-                    return;
-                }
-
-                File dataDir = new File(dataPath);
-                File cipherDir = new File(cipherPath);
-
-                if (!dataDir.exists() || !dataDir.isDirectory()) {
-                    appendLog("錯誤: 資料目錄不存在或不是目錄");
-                    return;
-                }
-
-                if (!cipherDir.exists()) {
-                    cipherDir.mkdirs();
-                    appendLog("已建立加密檔案目錄: " + cipherPath);
-                }
-
-                SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-                Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-
-                File[] files = dataDir.listFiles();
-                if (files == null) {
-                    appendLog("資料目錄中沒有檔案");
-                    return;
-                }
-
-                int encryptedCount = 0;
-                for (File file : files) {
-                    if (!file.isFile()) {
-                        continue;
-                    }
-
-                    byte[] fileBytes = Files.readAllBytes(file.toPath());
-                    byte[] encrypted = cipher.doFinal(fileBytes);
-                    String encoded = Base64.getEncoder().encodeToString(encrypted);
-
-                    File outFile = new File(cipherDir, file.getName() + ".enc");
-                    Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
-                    appendLog("已加密: " + file.getName() + " -> " + outFile.getName());
-                    encryptedCount++;
-                }
-
-                appendLog("加密完成! 共處理 " + encryptedCount + " 個檔案");
+                int count = encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                appendLog("加密完成! 共處理 " + count + " 個檔案");
 
             } catch (Exception ex) {
                 appendLog("加密過程中發生錯誤: " + ex.getMessage());
