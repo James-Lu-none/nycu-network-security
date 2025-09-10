@@ -59,14 +59,11 @@ public class AesTui {
         if (!dir.exists()) {
             if (dir.mkdirs()) {
                 System.out.println("Data directory created: " + dir.getPath());
+                return dir;
             } else {
                 System.out.println("Failed to create data directory.");
                 return null;
             }
-        }
-        if (!dir.isDirectory()) {
-            System.out.println("data path is not a directory.");
-            return null;
         }
         return dir;
     }
@@ -99,7 +96,7 @@ public class AesTui {
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            int count = encryptFiles(key, cipherDir, dataDir, System.out::println);
+            int count = encryptFiles(key, dataDir, cipherDir, System.out::println);
         } catch (final Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
         }
@@ -111,7 +108,7 @@ public class AesTui {
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            int count = decryptFiles(key, cipherDir, dataDir, System.out::println);
+            int count = decryptFiles(key, dataDir, cipherDir, System.out::println);
         } catch (Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }

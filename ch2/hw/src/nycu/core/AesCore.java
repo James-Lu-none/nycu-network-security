@@ -26,7 +26,7 @@ public class AesCore {
         }
     }
 
-    public static int encryptFiles(String key, File cipherDir, File dataDir, Consumer<String> logConsumer) throws Exception {
+    public static int encryptFiles(String key, File dataDir, File cipherDir, Consumer<String> logConsumer) throws Exception {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("AES key is missing.");
         }
@@ -65,7 +65,7 @@ public class AesCore {
             final byte[] encrypted = cipher.doFinal(fileBytes);
             final String encoded = Base64.getEncoder().encodeToString(encrypted);
 
-            File outFile = new File(dataDir, file.getName() + ".enc");
+            File outFile = new File(cipherDir, file.getName() + ".enc");
             Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
 
             logConsumer.accept("Encrypted: " + file.getName() + " -> " + outFile.getPath());
@@ -76,7 +76,7 @@ public class AesCore {
         return count;
     }
 
-    public static int decryptFiles(String key, File cipherDir, File dataDir, Consumer<String> logConsumer) throws Exception {
+    public static int decryptFiles(String key, File dataDir, File cipherDir, Consumer<String> logConsumer) throws Exception {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("AES key is missing.");
         }
@@ -96,7 +96,7 @@ public class AesCore {
         if (!dataDir.exists() || !dataDir.isDirectory()) {
             throw new IllegalArgumentException("Data directory is invalid.");
         }
-        
+
         File[] files = cipherDir.listFiles();
         if (files == null) {
             throw new IllegalStateException("No files found in cipher directory.");
