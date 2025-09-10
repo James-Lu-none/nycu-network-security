@@ -8,6 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.util.function.Consumer;
 
 public class AesCore {
 
@@ -198,5 +199,47 @@ public class AesCore {
         } catch (Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }
+    }
+
+    public static int decryptFiles(String key, File cipherDir, File dataDir, Consumer<String> logConsumer) throws Exception {
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("AES key is missing.");
+        }
+        if (!cipherDir.exists() || !cipherDir.isDirectory()) {
+            throw new IllegalArgumentException("Cipher directory is invalid.");
+        }
+        if (!dataDir.exists()) {
+            dataDir.mkdirs();
+        }
+
+        File[] files = cipherDir.listFiles();
+        if (files == null) {
+            throw new IllegalStateException("No files found in cipher directory.");
+        }
+
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+        int count = 0;
+        for (File file : files) {
+            if (!file.isFile() || !file.getName().endsWith(".enc")) {
+                continue;
+            }
+
+            byte[] encodedBytes = Files.readAllBytes(file.toPath());
+            byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
+            byte[] decrypted = cipher.doFinal(encrypted);
+
+            String baseName = file.getName().replaceFirst("\\.enc$", "");
+            File outFile = new File(dataDir, baseName);
+            Files.write(outFile.toPath(), decrypted);
+
+            logConsumer.accept("Decrypted: " + file.getName() + " -> " + outFile.getPath());
+            count++;
+        }
+
+        logConsumer.accept("Decryption finished. Total " + count + " file(s).");
+        return count;
     }
 }
