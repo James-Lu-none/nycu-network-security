@@ -396,17 +396,17 @@ public class AesGui extends JFrame {
             int keyLength;
             switch (selectedIndex) {
                 case 0:
-                    keyLength = 16;
-                    break;  // 128 位元
+                    keyLength = 128;
+                    break;
                 case 1:
-                    keyLength = 24;
-                    break;  // 192 位元
+                    keyLength = 192;
+                    break;
                 case 2:
-                    keyLength = 32;
-                    break;  // 256 位元
+                    keyLength = 256;
+                    break;
                 default:
-                    keyLength = 32;
-                    break; // 預設 256 位元
+                    keyLength = 256;
+                    break;
             }
 
             File keyFile = new File(keyPath);
