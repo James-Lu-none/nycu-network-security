@@ -5,11 +5,11 @@ import javax.swing.SwingUtilities;
 import nycu.ui.AesGui;
 import nycu.ui.AesTui;
 
-public class aeser {
+public final class aeser {
 
     private static final Scanner input = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         if (args.length > 0 && args[0].equals("console")) {
             runConsoleMode();
         } else {
@@ -18,7 +18,7 @@ public class aeser {
     }
 
     // Console mode
-    private static void runConsoleMode() {
+    private static final void runConsoleMode() {
         System.out.println("Welcome to use NYCU AESer.");
         System.out.println("1. Run AES encryptor");
         System.out.println("2. Run AES decryptor");
@@ -39,7 +39,7 @@ public class aeser {
     }
 
     // GUI mode
-    private static void runGUIMode() {
+    private static final void runGUIMode() {
         SwingUtilities.invokeLater(() -> {
             new AesGui().setVisible(true);
         });

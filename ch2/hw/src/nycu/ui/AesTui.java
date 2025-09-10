@@ -5,19 +5,20 @@ import java.nio.file.Files;
 import java.util.Scanner;
 import static nycu.core.AesCore.*;
 
-public class AesTui {
+public final class AesTui {
 
-    public final static int AES_KEY_LENGTH = 256;
+    public static final int AES_KEY_LENGTH = 256;
     public static final Scanner input = new Scanner(System.in);
 
     public static String getAesKey() {
-        String path = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
+        final String path = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
         String key = null;
-        if (path == null) {
+        String keyPath = path;
+        if (keyPath == null) {
             System.out.println("Enter AES key file path:");
-            path = input.nextLine();
+            keyPath = input.nextLine();
         }
-        final File file = new File(path);
+        final File file = new File(keyPath);
         if (file.exists()) {
             try {
                 final byte[] keyBytes = Files.readAllBytes(file.toPath());
@@ -50,12 +51,13 @@ public class AesTui {
     }
 
     public static File getDataDir() {
-        String path = System.getenv(AES_DATA_DIR_ENV_NAME);
-        if (path == null) {
+        final String path = System.getenv(AES_DATA_DIR_ENV_NAME);
+        String dirPath = path;
+        if (dirPath == null) {
             System.out.println("Enter data directory path:");
-            path = input.nextLine();
+            dirPath = input.nextLine();
         }
-        final File dir = new File(path);
+        final File dir = new File(dirPath);
         if (!dir.exists()) {
             if (dir.mkdirs()) {
                 System.out.println("Data directory created: " + dir.getPath());
@@ -69,12 +71,13 @@ public class AesTui {
     }
 
     public static File getCipherDir() {
-        String path = System.getenv(AES_CIPHER_DIR_ENV_NAME);
-        if (path == null) {
+        final String path = System.getenv(AES_CIPHER_DIR_ENV_NAME);
+        String dirPath = path;
+        if (dirPath == null) {
             System.out.println("Enter cipher directory path:");
-            path = input.nextLine();
+            dirPath = input.nextLine();
         }
-        final File dir = new File(path);
+        final File dir = new File(dirPath);
         if (!dir.exists()) {
             if (dir.mkdirs()) {
                 System.out.println("Cipher directory created: " + dir.getPath());
@@ -96,7 +99,7 @@ public class AesTui {
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            int count = encryptFiles(key, dataDir, cipherDir, System.out::println);
+            final int count = encryptFiles(key, dataDir, cipherDir, System.out::println);
         } catch (final Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
         }
@@ -108,8 +111,8 @@ public class AesTui {
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            int count = decryptFiles(key, dataDir, cipherDir, System.out::println);
-        } catch (Exception e) {
+            final int count = decryptFiles(key, dataDir, cipherDir, System.out::println);
+        } catch (final Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }
     }

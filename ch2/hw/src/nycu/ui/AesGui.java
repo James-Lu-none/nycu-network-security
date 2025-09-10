@@ -11,17 +11,27 @@ import static nycu.core.AesCore.*;
 public class AesGui extends JFrame {
 
     // all your UI components here
-    private JTextField keyFilePathField;
-    private JTextField dataDirField;
-    private JTextField cipherDirField;
-    private JTextArea logArea;
-    private JButton encryptButton;
-    private JButton decryptButton;
-    private JComboBox<String> keyLengthComboBox;
-    private JCheckBox useEnvVarsCheckBox;
-    private JLabel envStatusLabel;
+    private final JTextField keyFilePathField;
+    private final JTextField dataDirField;
+    private final JTextField cipherDirField;
+    private final JTextArea logArea;
+    private final JButton encryptButton;
+    private final JButton decryptButton;
+    private final JComboBox<String> keyLengthComboBox;
+    private final JCheckBox useEnvVarsCheckBox;
+    private final JLabel envStatusLabel;
 
     public AesGui() {
+        keyFilePathField = new JTextField();
+        dataDirField = new JTextField();
+        cipherDirField = new JTextField();
+        logArea = new JTextArea(10, 50);
+        encryptButton = new JButton("Encrypt Files");
+        decryptButton = new JButton("Decrypt Files");
+        keyLengthComboBox = new JComboBox<>(new String[]{"16 chars", "24 chars", "32 chars"});
+        useEnvVarsCheckBox = new JCheckBox("Auto Use Environment Variables");
+        envStatusLabel = new JLabel();
+
         initializeGUI();
         checkAndUpdateEnvironmentVariables();
     }
@@ -34,17 +44,17 @@ public class AesGui extends JFrame {
         setLocationRelativeTo(null);
 
         // Main panel
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        final JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // Top config panel
-        JPanel configPanel = createConfigPanel();
+        final JPanel configPanel = createConfigPanel();
 
         // Middle button panel
-        JPanel buttonPanel = createButtonPanel();
+        final JPanel buttonPanel = createButtonPanel();
 
         // Bottom log panel
-        JPanel logPanel = createLogPanel();
+        final JPanel logPanel = createLogPanel();
 
         mainPanel.add(configPanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
@@ -54,9 +64,9 @@ public class AesGui extends JFrame {
     }
 
     private JPanel createConfigPanel() {
-        JPanel configPanel = new JPanel(new GridBagLayout());
+        final JPanel configPanel = new JPanel(new GridBagLayout());
         configPanel.setBorder(BorderFactory.createTitledBorder("Configuration"));
-        GridBagConstraints gbc = new GridBagConstraints();
+        final GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
         // AES Key File Path
@@ -68,13 +78,12 @@ public class AesGui extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        keyFilePathField = new JTextField();
         configPanel.add(keyFilePathField, gbc);
 
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton browseKeyButton = new JButton("Browse");
+        final JButton browseKeyButton = new JButton("Browse");
         browseKeyButton.addActionListener(e -> browseForKeyFile());
         configPanel.add(browseKeyButton, gbc);
 
@@ -87,13 +96,12 @@ public class AesGui extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        dataDirField = new JTextField();
         configPanel.add(dataDirField, gbc);
 
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton browseDataButton = new JButton("Browse");
+        final JButton browseDataButton = new JButton("Browse");
         browseDataButton.addActionListener(e -> browseForDirectory(dataDirField, "Select Data Directory"));
         configPanel.add(browseDataButton, gbc);
 
@@ -106,13 +114,12 @@ public class AesGui extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        cipherDirField = new JTextField();
         configPanel.add(cipherDirField, gbc);
 
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton browseCipherButton = new JButton("Browse");
+        final JButton browseCipherButton = new JButton("Browse");
         browseCipherButton.addActionListener(e -> browseForDirectory(cipherDirField, "Select Cipher Directory"));
         configPanel.add(browseCipherButton, gbc);
 
@@ -125,13 +132,11 @@ public class AesGui extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        JPanel envPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        final JPanel envPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-        useEnvVarsCheckBox = new JCheckBox("Auto Use Environment Variables");
         useEnvVarsCheckBox.addActionListener(e -> toggleEnvironmentVariables());
         envPanel.add(useEnvVarsCheckBox);
 
-        envStatusLabel = new JLabel();
         envStatusLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
         envPanel.add(envStatusLabel);
 
@@ -140,7 +145,7 @@ public class AesGui extends JFrame {
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JButton refreshEnvButton = new JButton("Refresh");
+        final JButton refreshEnvButton = new JButton("Refresh");
         refreshEnvButton.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
         refreshEnvButton.addActionListener(e -> checkAndUpdateEnvironmentVariables());
         configPanel.add(refreshEnvButton, gbc);
@@ -154,7 +159,6 @@ public class AesGui extends JFrame {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        keyLengthComboBox = new JComboBox<>(new String[]{"16 chars", "24 chars", "32 chars"});
         keyLengthComboBox.setSelectedIndex(2); // Default to 32 chars
         configPanel.add(keyLengthComboBox, gbc);
 
@@ -167,18 +171,16 @@ public class AesGui extends JFrame {
     }
 
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        final JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
 
-        encryptButton = new JButton("Encrypt Files");
         encryptButton.setPreferredSize(new Dimension(120, 40));
         encryptButton.addActionListener(new EncryptActionListener());
 
-        decryptButton = new JButton("Decrypt Files");
         decryptButton.setPreferredSize(new Dimension(120, 40));
         decryptButton.addActionListener(new DecryptActionListener());
 
-        JButton generateKeyButton = new JButton("Generate Key");
+        final JButton generateKeyButton = new JButton("Generate Key");
         generateKeyButton.setPreferredSize(new Dimension(120, 40));
         generateKeyButton.addActionListener(e -> generateNewKey());
 
@@ -190,17 +192,16 @@ public class AesGui extends JFrame {
     }
 
     private JPanel createLogPanel() {
-        JPanel logPanel = new JPanel(new BorderLayout());
+        final JPanel logPanel = new JPanel(new BorderLayout());
         logPanel.setBorder(BorderFactory.createTitledBorder("Log"));
 
-        logArea = new JTextArea(10, 50);
         logArea.setEditable(false);
         logArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
-        JScrollPane scrollPane = new JScrollPane(logArea);
+        final JScrollPane scrollPane = new JScrollPane(logArea);
         logPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JButton clearLogButton = new JButton("Clear Log");
+        final JButton clearLogButton = new JButton("Clear Log");
         clearLogButton.addActionListener(e -> logArea.setText(""));
         logPanel.add(clearLogButton, BorderLayout.SOUTH);
 
@@ -209,9 +210,9 @@ public class AesGui extends JFrame {
 
     // Check and update environment variable status
     private void checkAndUpdateEnvironmentVariables() {
-        String keyPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
-        String dataDir = System.getenv(AES_DATA_DIR_ENV_NAME);
-        String cipherDir = System.getenv(AES_CIPHER_DIR_ENV_NAME);
+        final String keyPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
+        final String dataDir = System.getenv(AES_DATA_DIR_ENV_NAME);
+        final String cipherDir = System.getenv(AES_CIPHER_DIR_ENV_NAME);
 
         int envCount = 0;
         if (keyPath != null && !keyPath.trim().isEmpty()) {
@@ -250,9 +251,9 @@ public class AesGui extends JFrame {
 
     // Apply environment variables to input fields
     private void applyEnvironmentVariables() {
-        String keyPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
-        String dataDir = System.getenv(AES_DATA_DIR_ENV_NAME);
-        String cipherDir = System.getenv(AES_CIPHER_DIR_ENV_NAME);
+        final String keyPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
+        final String dataDir = System.getenv(AES_DATA_DIR_ENV_NAME);
+        final String cipherDir = System.getenv(AES_CIPHER_DIR_ENV_NAME);
 
         if (keyPath != null && !keyPath.trim().isEmpty()) {
             keyFilePathField.setText(keyPath);
@@ -292,11 +293,11 @@ public class AesGui extends JFrame {
 
     // Get effective key file path (prefer user input, then env var)
     private String getEffectiveKeyPath() {
-        String userInput = keyFilePathField.getText().trim();
+        final String userInput = keyFilePathField.getText().trim();
 
         // If user input exists and is not from env var, prefer user input
         if (!userInput.isEmpty()) {
-            String envPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
+            final String envPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
             if (envPath == null || !userInput.equals(envPath)) {
                 appendLog("Using user-specified key path: " + userInput);
                 return userInput;
@@ -305,7 +306,7 @@ public class AesGui extends JFrame {
 
         // If checkbox is selected and env var exists
         if (useEnvVarsCheckBox.isSelected()) {
-            String envPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
+            final String envPath = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
             if (envPath != null && !envPath.trim().isEmpty()) {
                 appendLog("Using environment variable key path: " + envPath);
                 return envPath;
@@ -317,17 +318,17 @@ public class AesGui extends JFrame {
 
     // Get effective data directory path
     private String getEffectiveDataDir() {
-        String userInput = dataDirField.getText().trim();
+        final String userInput = dataDirField.getText().trim();
 
         if (!userInput.isEmpty()) {
-            String envPath = System.getenv(AES_DATA_DIR_ENV_NAME);
+            final String envPath = System.getenv(AES_DATA_DIR_ENV_NAME);
             if (envPath == null || !userInput.equals(envPath)) {
                 return userInput;
             }
         }
 
         if (useEnvVarsCheckBox.isSelected()) {
-            String envPath = System.getenv(AES_DATA_DIR_ENV_NAME);
+            final String envPath = System.getenv(AES_DATA_DIR_ENV_NAME);
             if (envPath != null && !envPath.trim().isEmpty()) {
                 return envPath;
             }
@@ -338,17 +339,17 @@ public class AesGui extends JFrame {
 
     // Get effective cipher directory path
     private String getEffectiveCipherDir() {
-        String userInput = cipherDirField.getText().trim();
+        final String userInput = cipherDirField.getText().trim();
 
         if (!userInput.isEmpty()) {
-            String envPath = System.getenv(AES_CIPHER_DIR_ENV_NAME);
+            final String envPath = System.getenv(AES_CIPHER_DIR_ENV_NAME);
             if (envPath == null || !userInput.equals(envPath)) {
                 return userInput;
             }
         }
 
         if (useEnvVarsCheckBox.isSelected()) {
-            String envPath = System.getenv(AES_CIPHER_DIR_ENV_NAME);
+            final String envPath = System.getenv(AES_CIPHER_DIR_ENV_NAME);
             if (envPath != null && !envPath.trim().isEmpty()) {
                 return envPath;
             }
@@ -358,7 +359,7 @@ public class AesGui extends JFrame {
     }
 
     private void browseForKeyFile() {
-        JFileChooser fileChooser = new JFileChooser();
+        final JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select AES Key File");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
@@ -367,8 +368,8 @@ public class AesGui extends JFrame {
         }
     }
 
-    private void browseForDirectory(JTextField textField, String title) {
-        JFileChooser directoryChooser = new JFileChooser();
+    private void browseForDirectory(final JTextField textField, final String title) {
+        final JFileChooser directoryChooser = new JFileChooser();
         directoryChooser.setDialogTitle(title);
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -378,7 +379,7 @@ public class AesGui extends JFrame {
     }
 
     private void generateNewKey() {
-        String keyPath = keyFilePathField.getText().trim();
+        final String keyPath = keyFilePathField.getText().trim();
         if (keyPath.isEmpty()) {
             appendLog("Error: Please specify key file path first");
             return;
@@ -386,8 +387,8 @@ public class AesGui extends JFrame {
 
         try {
             // Get selected key length
-            int selectedIndex = keyLengthComboBox.getSelectedIndex();
-            int keyLength;
+            final int selectedIndex = keyLengthComboBox.getSelectedIndex();
+            final int keyLength;
             switch (selectedIndex) {
                 case 0:
                     keyLength = 128;
@@ -403,8 +404,8 @@ public class AesGui extends JFrame {
                     break;
             }
 
-            File keyFile = new File(keyPath);
-            String key = generateRandomAesKey(keyLength);
+            final File keyFile = new File(keyPath);
+            final String key = generateRandomAesKey(keyLength);
             Files.write(keyFile.toPath(), key.getBytes());
             appendLog("Generated " + keyLength + "-bit key and saved to: " + keyPath);
             appendLog("Key content: " + key);
@@ -415,21 +416,21 @@ public class AesGui extends JFrame {
 
     // GUI version of key retrieval
     private String getAesKeyGUI() {
-        String keyPath = getEffectiveKeyPath();
+        final String keyPath = getEffectiveKeyPath();
         if (keyPath.isEmpty()) {
             appendLog("Error: Please specify AES key file path");
             return null;
         }
 
-        File file = new File(keyPath);
+        final File file = new File(keyPath);
         if (!file.exists()) {
             appendLog("Error: Key file does not exist: " + keyPath);
             return null;
         }
 
         try {
-            byte[] keyBytes = Files.readAllBytes(file.toPath());
-            String key = new String(keyBytes).trim();
+            final byte[] keyBytes = Files.readAllBytes(file.toPath());
+            final String key = new String(keyBytes).trim();
             appendLog("Successfully read key from file: " + keyPath);
             return key;
         } catch (Exception e) {
@@ -438,7 +439,7 @@ public class AesGui extends JFrame {
         }
     }
 
-    private void appendLog(String message) {
+    private void appendLog(final String message) {
         SwingUtilities.invokeLater(() -> {
             logArea.append("[" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")) + "] " + message + "\n");
             logArea.setCaretPosition(logArea.getDocument().getLength());
@@ -446,10 +447,10 @@ public class AesGui extends JFrame {
     }
 
     // Encrypt button event handler
-    private class EncryptActionListener implements ActionListener {
+    private final class EncryptActionListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             new Thread(() -> {
                 SwingUtilities.invokeLater(() -> encryptButton.setEnabled(false));
                 try {
@@ -462,9 +463,9 @@ public class AesGui extends JFrame {
 
         private void performEncryption() {
             try {
-                String key = getAesKeyGUI();
-                File cipherDir = new File(getEffectiveCipherDir());
-                File dataDir = new File(getEffectiveDataDir());
+                final String key = getAesKeyGUI();
+                final File cipherDir = new File(getEffectiveCipherDir());
+                final File dataDir = new File(getEffectiveDataDir());
 
                 int count = encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
             } catch (Exception ex) {
@@ -474,10 +475,10 @@ public class AesGui extends JFrame {
     }
 
     // Decrypt button event handler
-    private class DecryptActionListener implements ActionListener {
+    private final class DecryptActionListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             new Thread(() -> {
                 SwingUtilities.invokeLater(() -> decryptButton.setEnabled(false));
                 try {
@@ -490,9 +491,9 @@ public class AesGui extends JFrame {
 
         private void performDecryption() {
             try {
-                String key = getAesKeyGUI();
-                File cipherDir = new File(getEffectiveCipherDir());
-                File dataDir = new File(getEffectiveDataDir());
+                final String key = getAesKeyGUI();
+                final File cipherDir = new File(getEffectiveCipherDir());
+                final File dataDir = new File(getEffectiveDataDir());
 
                 int count = decryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
             } catch (Exception ex) {
