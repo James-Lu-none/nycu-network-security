@@ -30,6 +30,16 @@ public class AesCore {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("AES key is missing.");
         }
+        final byte[] decodedKey;
+        try {
+            decodedKey = Base64.getDecoder().decode(key);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Key file does not contain valid Base64-encoded data.", e);
+        }
+        if (!(decodedKey.length == 16 || decodedKey.length == 24 || decodedKey.length == 32)) {
+            throw new IllegalArgumentException("AES key length is invalid: must be 16, 24, or 32 bytes, but found " + decodedKey.length);
+        }
+
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
             throw new IllegalArgumentException("Cipher directory is invalid.");
         }
@@ -42,7 +52,7 @@ public class AesCore {
             throw new IllegalStateException("No files found in cipher directory.");
         }
 
-        final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+        final SecretKeySpec secretKey = new SecretKeySpec(decodedKey, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
@@ -70,6 +80,16 @@ public class AesCore {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("AES key is missing.");
         }
+        final byte[] decodedKey;
+        try {
+            decodedKey = Base64.getDecoder().decode(key);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Key file does not contain valid Base64-encoded data.", e);
+        }
+        if (!(decodedKey.length == 16 || decodedKey.length == 24 || decodedKey.length == 32)) {
+            throw new IllegalArgumentException("AES key length is invalid: must be 16, 24, or 32 bytes, but found " + decodedKey.length);
+        }
+
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
             throw new IllegalArgumentException("Cipher directory is invalid.");
         }
@@ -82,8 +102,8 @@ public class AesCore {
             throw new IllegalStateException("No files found in cipher directory.");
         }
 
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        final SecretKeySpec secretKey = new SecretKeySpec(decodedKey, "AES");
+        final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
         int count = 0;

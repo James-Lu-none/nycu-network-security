@@ -2,7 +2,6 @@ package nycu.ui;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Base64;
 import java.util.Scanner;
 import static nycu.core.AesCore.*;
 
@@ -19,7 +18,15 @@ public class AesTui {
             path = input.nextLine();
         }
         final File file = new File(path);
-        if (!file.exists()) {
+        if (file.exists()) {
+            try {
+                final byte[] keyBytes = Files.readAllBytes(file.toPath());
+                key = new String(keyBytes).trim();
+            } catch (final Exception e) {
+                System.out.println("Failed to read key from file: " + e.getMessage());
+                return null;
+            }
+        } else {
             if (file.isDirectory()) {
                 System.out.println("Entered path is a directory. Please delete it and try again.");
                 return null;
@@ -36,26 +43,6 @@ public class AesTui {
                 }
             } catch (final Exception e) {
                 System.out.println("Error creating key file: " + e.getMessage());
-                return null;
-            }
-        }
-        if (path != null) {
-            try {
-                final byte[] keyBytes = Files.readAllBytes(file.toPath());
-                byte[] decodedKey;
-                try {
-                    decodedKey = Base64.getDecoder().decode(keyBytes);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Key file does not contain valid Base64-encoded data.");
-                    return null;
-                }
-
-                if (!(decodedKey.length == 16 || decodedKey.length == 24 || decodedKey.length == 32)) {
-                    System.out.println("Key length is not 16, 24, or 32 bytes.");
-                    return null;
-                }
-            } catch (final Exception e) {
-                System.out.println("Failed to read key from file: " + e.getMessage());
                 return null;
             }
         }

@@ -1,14 +1,12 @@
 package nycu.ui;
 
-import java.io.File;
-import java.nio.file.Files;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.File;
+import java.nio.file.Files;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import static nycu.core.AesCore.*;
 public class AesGui extends JFrame {
 
@@ -432,14 +430,7 @@ public class AesGui extends JFrame {
         try {
             byte[] keyBytes = Files.readAllBytes(file.toPath());
             String key = new String(keyBytes).trim();
-
-            // Check key length
-            if (!(key.length() == 16 || key.length() == 24 || key.length() == 32)) {
-                appendLog("Error: Key length must be 16, 24, or 32 characters, current length: " + key.length());
-                return null;
-            }
-
-            appendLog("Successfully read key, length: " + key.length() + " characters");
+            appendLog("Successfully read key from file: " + keyPath);
             return key;
         } catch (Exception e) {
             appendLog("Error reading key file: " + e.getMessage());
