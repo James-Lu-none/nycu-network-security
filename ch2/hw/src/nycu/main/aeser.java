@@ -2,7 +2,7 @@ package nycu.main;
 
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
-import static nycu.tools.AesCore.*;
+import static nycu.core.AesCore.*;
 import nycu.ui.AesGui;
 
 public class aeser {

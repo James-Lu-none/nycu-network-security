@@ -1,4 +1,4 @@
-package nycu.tools;
+package nycu.core;
 
 import java.io.File;
 import java.nio.file.Files;

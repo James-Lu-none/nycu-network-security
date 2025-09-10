@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import static nycu.tools.AesCore.*;
+import static nycu.core.AesCore.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
