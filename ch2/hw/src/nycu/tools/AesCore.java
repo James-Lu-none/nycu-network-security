@@ -11,10 +11,10 @@ public class AesCore {
 
     public static final Scanner input = new Scanner(System.in);
     
-    final static String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
-    final static String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
-    final static String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
-    final static int AES_KEY_LENGTH = 256;
+    public final static String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
+    public final static String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
+    public final static String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
+    public final static int AES_KEY_LENGTH = 256;
 
     public static String getAesKey() {
         String path = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);
