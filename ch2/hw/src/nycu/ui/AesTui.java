@@ -107,39 +107,11 @@ public class AesTui {
     public static void encryptor() {
         try {
             final String key = getAesKey();
-            if (key == null) {
-                return;
-            }
-
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
-            if (dataDir == null || cipherDir == null) {
-                return;
-            }
 
-            final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-
-            final File[] files = dataDir.listFiles();
-            if (files == null) {
-                System.out.println("No files found in data directory.");
-                return;
-            }
-
-            for (final File file : files) {
-                if (!file.isFile()) {
-                    continue;
-                }
-
-                final byte[] fileBytes = Files.readAllBytes(file.toPath());
-                final byte[] encrypted = cipher.doFinal(fileBytes);
-                final String encoded = Base64.getEncoder().encodeToString(encrypted);
-
-                final File outFile = new File(cipherDir, file.getName() + ".enc");
-                Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
-                System.out.println("Encrypted: " + file.getName() + " -> " + outFile.getPath());
-            }
+            int count = encryptFiles(key, cipherDir, dataDir, System.out::println);
+            System.out.println("Encryption finished! Total " + count + " file(s) processed.");
         } catch (final Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
         }
@@ -148,40 +120,11 @@ public class AesTui {
     public static void decryptor() {
         try {
             final String key = getAesKey();
-            if (key == null) {
-                return;
-            }
-
-            final File cipherDir = getCipherDir();
             final File dataDir = getDataDir();
-            if (cipherDir == null || dataDir == null) {
-                return;
-            }
+            final File cipherDir = getCipherDir();
 
-            final SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-
-            final File[] files = cipherDir.listFiles();
-            if (files == null) {
-                System.out.println("No files found in cipher directory.");
-                return;
-            }
-
-            for (final File file : files) {
-                if (!file.isFile() || !file.getName().endsWith(".enc")) {
-                    continue;
-                }
-
-                final byte[] encodedBytes = Files.readAllBytes(file.toPath());
-                final byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
-                final byte[] decrypted = cipher.doFinal(encrypted);
-
-                final String baseName = file.getName().replaceFirst("\\.enc$", "");
-                final File outFile = new File(dataDir, baseName);
-                Files.write(outFile.toPath(), decrypted);
-                System.out.println("Decrypted: " + file.getName() + " -> " + outFile.getPath());
-            }
+            int count = decryptFiles(key, cipherDir, dataDir, System.out::println);
+            System.out.println("Decryption finished! Total " + count + " file(s) processed.");
         } catch (Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }
