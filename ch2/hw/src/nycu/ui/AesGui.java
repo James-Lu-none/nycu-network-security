@@ -467,8 +467,6 @@ public class AesGui extends JFrame {
                 File dataDir = new File(getEffectiveDataDir());
 
                 int count = encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
-                appendLog("Encryption finished! Total " + count + " file(s) processed.");
-
             } catch (Exception ex) {
                 appendLog("Error during encryption: " + ex.getMessage());
             }
@@ -497,8 +495,6 @@ public class AesGui extends JFrame {
                 File dataDir = new File(getEffectiveDataDir());
 
                 int count = decryptFiles(key, cipherDir, dataDir, AesGui.this::appendLog);
-                appendLog("Decryption finished! Total " + count + " file(s) processed.");
-
             } catch (Exception ex) {
                 appendLog("Error during decryption: " + ex.getMessage());
             }

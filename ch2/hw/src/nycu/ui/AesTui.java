@@ -100,7 +100,6 @@ public class AesTui {
             final File cipherDir = getCipherDir();
 
             int count = encryptFiles(key, cipherDir, dataDir, System.out::println);
-            System.out.println("Encryption finished! Total " + count + " file(s) processed.");
         } catch (final Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
         }
@@ -113,7 +112,6 @@ public class AesTui {
             final File cipherDir = getCipherDir();
 
             int count = decryptFiles(key, cipherDir, dataDir, System.out::println);
-            System.out.println("Decryption finished! Total " + count + " file(s) processed.");
         } catch (Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }

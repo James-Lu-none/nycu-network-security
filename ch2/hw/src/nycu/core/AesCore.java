@@ -124,7 +124,7 @@ public class AesCore {
             count++;
         }
 
-        logConsumer.accept("Decryption finished. Total " + count + " file(s).");
+        logConsumer.accept("Decryption finished. Total " + count + " file(s) processed.");
         return count;
     }
 }
