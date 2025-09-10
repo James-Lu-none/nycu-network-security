@@ -2,12 +2,13 @@ package nycu.ui;
 
 import java.io.File;
 import java.nio.file.Files;
-
+import java.util.Scanner;
 import static nycu.core.AesCore.*;
 
 public class AesTui {
 
     public final static int AES_KEY_LENGTH = 256;
+    public static final Scanner input = new Scanner(System.in);
 
     public static String getAesKey() {
         String path = System.getenv(AES_KEY_FILE_PATH_ENV_NAME);

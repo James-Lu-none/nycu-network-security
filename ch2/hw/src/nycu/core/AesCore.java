@@ -3,16 +3,13 @@ package nycu.core;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Base64;
-import java.util.Scanner;
+import java.util.function.Consumer;
 import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.util.function.Consumer;
+import javax.crypto.spec.SecretKeySpec;
 
 public class AesCore {
-
-    public static final Scanner input = new Scanner(System.in);
     
     public final static String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
     public final static String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
