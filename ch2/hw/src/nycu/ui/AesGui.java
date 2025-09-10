@@ -2,17 +2,14 @@ package nycu.ui;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Base64;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import static nycu.core.AesCore.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.UIManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import static nycu.core.AesCore.*;
 
 public class AesGui extends JFrame {
 

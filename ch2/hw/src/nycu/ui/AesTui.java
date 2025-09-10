@@ -2,13 +2,6 @@ package nycu.ui;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Base64;
-import java.util.Scanner;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.util.function.Consumer;
 
 import static nycu.core.AesCore.*;
 
