@@ -43,13 +43,13 @@ public class AesCore {
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
             throw new IllegalArgumentException("Cipher directory is invalid.");
         }
-        if (!dataDir.exists()) {
-            dataDir.mkdirs();
+        if (!dataDir.exists() || !dataDir.isDirectory()) {
+            throw new IllegalArgumentException("Data directory is invalid.");
         }
 
-        File[] files = cipherDir.listFiles();
+        File[] files = dataDir.listFiles();
         if (files == null) {
-            throw new IllegalStateException("No files found in cipher directory.");
+            throw new IllegalStateException("No files found in data directory.");
         }
 
         final SecretKeySpec secretKey = new SecretKeySpec(decodedKey, "AES");
@@ -93,10 +93,10 @@ public class AesCore {
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
             throw new IllegalArgumentException("Cipher directory is invalid.");
         }
-        if (!dataDir.exists()) {
-            dataDir.mkdirs();
+        if (!dataDir.exists() || !dataDir.isDirectory()) {
+            throw new IllegalArgumentException("Data directory is invalid.");
         }
-
+        
         File[] files = cipherDir.listFiles();
         if (files == null) {
             throw new IllegalStateException("No files found in cipher directory.");
