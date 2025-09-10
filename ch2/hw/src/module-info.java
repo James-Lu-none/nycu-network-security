@@ -9,5 +9,4 @@ module NYCUAESExample {
     requires java.base;
     
     exports nycu.main;
-    exports nycu.tools;
 }
