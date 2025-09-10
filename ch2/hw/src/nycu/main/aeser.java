@@ -2,7 +2,6 @@ package nycu.main;
 
 import java.util.Scanner;
 import javax.swing.SwingUtilities;
-
 import nycu.ui.AesGui;
 import nycu.ui.AesTui;
 

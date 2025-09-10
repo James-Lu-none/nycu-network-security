@@ -2,6 +2,7 @@ package nycu.ui;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Base64;
 import java.util.Scanner;
 import static nycu.core.AesCore.*;
 
@@ -41,9 +42,16 @@ public class AesTui {
         if (path != null) {
             try {
                 final byte[] keyBytes = Files.readAllBytes(file.toPath());
-                key = new String(keyBytes).trim();
-                if (!(key.length() == 16 || key.length() == 24 || key.length() == 32)) {
-                    System.out.println("Key length is not 16, 24, or 32 characters.");
+                byte[] decodedKey;
+                try {
+                    decodedKey = Base64.getDecoder().decode(keyBytes);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Key file does not contain valid Base64-encoded data.");
+                    return null;
+                }
+
+                if (!(decodedKey.length == 16 || decodedKey.length == 24 || decodedKey.length == 32)) {
+                    System.out.println("Key length is not 16, 24, or 32 bytes.");
                     return null;
                 }
             } catch (final Exception e) {
