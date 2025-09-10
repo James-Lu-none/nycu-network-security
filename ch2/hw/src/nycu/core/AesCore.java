@@ -6,6 +6,8 @@ import java.util.Base64;
 import java.util.Scanner;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 public class AesCore {
 
@@ -32,7 +34,7 @@ public class AesCore {
             try {
                 System.out.println("Key file not found. Generating new key file at: " + file.getPath());
                 if (file.createNewFile()) {
-                    key = generateRandomAesKey();
+                    key = generateRandomAesKey(AES_KEY_LENGTH);
                     Files.write(file.toPath(), key.getBytes());
                     System.out.println("Key file generated.");
                 } else {
@@ -60,25 +62,15 @@ public class AesCore {
         return key;
     }
 
-    public static String generateRandomAesKey() {
-        return generateRandomAesKey(32); // 預設 32 字元 (256 位元)
-    }
-
     public static String generateRandomAesKey(int keyLength) {
-        if (keyLength != 16 && keyLength != 24 && keyLength != 32) {
-            throw new IllegalArgumentException("金鑰長度必須是 16、24 或 32 字元");
+        try {
+            final KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(keyLength);
+            final SecretKey secretKey = keyGen.generateKey();
+            return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        } catch (final Exception e) {
+            throw new RuntimeException("Error generating AES key", e);
         }
-
-        // 產生隨機的純文字金鑰
-        StringBuilder key = new StringBuilder();
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        java.security.SecureRandom random = new java.security.SecureRandom();
-
-        for (int i = 0; i < keyLength; i++) {
-            key.append(chars.charAt(random.nextInt(chars.length())));
-        }
-
-        return key.toString();
     }
 
     public static File getDataDir() {
