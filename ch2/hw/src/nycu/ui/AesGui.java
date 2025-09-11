@@ -454,23 +454,17 @@ public class AesGui extends JFrame {
             new Thread(() -> {
                 SwingUtilities.invokeLater(() -> encryptButton.setEnabled(false));
                 try {
-                    performEncryption();
+                    final String key = getAesKeyGUI();
+                    final File cipherDir = new File(getEffectiveCipherDir());
+                    final File dataDir = new File(getEffectiveDataDir());
+
+                    encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                } catch (Exception ex) {
+                    appendLog("Error during encryption: " + ex.getMessage());
                 } finally {
                     SwingUtilities.invokeLater(() -> encryptButton.setEnabled(true));
                 }
             }).start();
-        }
-
-        private void performEncryption() {
-            try {
-                final String key = getAesKeyGUI();
-                final File cipherDir = new File(getEffectiveCipherDir());
-                final File dataDir = new File(getEffectiveDataDir());
-
-                encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
-            } catch (Exception ex) {
-                appendLog("Error during encryption: " + ex.getMessage());
-            }
         }
     }
 
@@ -482,23 +476,17 @@ public class AesGui extends JFrame {
             new Thread(() -> {
                 SwingUtilities.invokeLater(() -> decryptButton.setEnabled(false));
                 try {
-                    performDecryption();
+                    final String key = getAesKeyGUI();
+                    final File cipherDir = new File(getEffectiveCipherDir());
+                    final File dataDir = new File(getEffectiveDataDir());
+
+                    decryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                } catch (Exception ex) {
+                    appendLog("Error during decryption: " + ex.getMessage());
                 } finally {
                     SwingUtilities.invokeLater(() -> decryptButton.setEnabled(true));
                 }
             }).start();
-        }
-
-        private void performDecryption() {
-            try {
-                final String key = getAesKeyGUI();
-                final File cipherDir = new File(getEffectiveCipherDir());
-                final File dataDir = new File(getEffectiveDataDir());
-
-                decryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
-            } catch (Exception ex) {
-                appendLog("Error during decryption: " + ex.getMessage());
-            }
         }
     }
 }
