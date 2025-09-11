@@ -26,7 +26,7 @@ public class AesCore {
         }
     }
 
-    public static int encryptFiles(final String key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+    public static void encryptFiles(final String key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("AES key is missing.");
         }
@@ -73,10 +73,9 @@ public class AesCore {
         }
 
         logConsumer.accept("Encryption finished. Total " + count + " file(s).");
-        return count;
     }
 
-    public static int decryptFiles(final String key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+    public static void decryptFiles(final String key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("AES key is missing.");
         }
@@ -124,7 +123,6 @@ public class AesCore {
             count++;
         }
 
-        logConsumer.accept("Decryption finished. Total " + count + " file(s) processed.");
-        return count;
+        logConsumer.accept("Decryption finished. Total " + count + " file(s) processed.");        
     }
 }

@@ -467,7 +467,7 @@ public class AesGui extends JFrame {
                 final File cipherDir = new File(getEffectiveCipherDir());
                 final File dataDir = new File(getEffectiveDataDir());
 
-                int count = encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
             } catch (Exception ex) {
                 appendLog("Error during encryption: " + ex.getMessage());
             }
@@ -495,7 +495,7 @@ public class AesGui extends JFrame {
                 final File cipherDir = new File(getEffectiveCipherDir());
                 final File dataDir = new File(getEffectiveDataDir());
 
-                int count = decryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                decryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
             } catch (Exception ex) {
                 appendLog("Error during decryption: " + ex.getMessage());
             }
