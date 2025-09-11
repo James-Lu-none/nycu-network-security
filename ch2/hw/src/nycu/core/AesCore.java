@@ -22,22 +22,22 @@ public class AesCore {
             final SecretKey secretKey = keyGen.generateKey();
             return Base64.getEncoder().encodeToString(secretKey.getEncoded());
         } catch (final Exception e) {
-            throw new RuntimeException("Error generating AES key", e);
+            throw new RuntimeException("Error generating AES base64Key", e);
         }
     }
 
-    public static void encryptFiles(final String key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
-        if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("AES key is missing.");
+    public static void encryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+        if (base64Key == null || base64Key.isEmpty()) {
+            throw new IllegalArgumentException("AES base64Key is missing.");
         }
-        final byte[] decodedKey;
+        final byte[] key;
         try {
-            decodedKey = Base64.getDecoder().decode(key);
+            key = Base64.getDecoder().decode(base64Key);
         } catch (final IllegalArgumentException e) {
             throw new IllegalArgumentException("Key file does not contain valid Base64-encoded data.", e);
         }
-        if (!(decodedKey.length == 16 || decodedKey.length == 24 || decodedKey.length == 32)) {
-            throw new IllegalArgumentException("AES key length is invalid: must be 16, 24, or 32 bytes, but found " + decodedKey.length);
+        if (!(key.length == 16 || key.length == 24 || key.length == 32)) {
+            throw new IllegalArgumentException("AES key length is invalid: must be 16, 24, or 32 bytes, but found " + key.length);
         }
 
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
@@ -52,7 +52,7 @@ public class AesCore {
             throw new IllegalStateException("No files found in data directory.");
         }
 
-        final SecretKeySpec secretKey = new SecretKeySpec(decodedKey, "AES");
+        final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
@@ -75,18 +75,18 @@ public class AesCore {
         logConsumer.accept("Encryption finished. Total " + count + " file(s).");
     }
 
-    public static void decryptFiles(final String key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
-        if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("AES key is missing.");
+    public static void decryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+        if (base64Key == null || base64Key.isEmpty()) {
+            throw new IllegalArgumentException("AES base64Key is missing.");
         }
-        final byte[] decodedKey;
+        final byte[] key;
         try {
-            decodedKey = Base64.getDecoder().decode(key);
+            key = Base64.getDecoder().decode(base64Key);
         } catch (final IllegalArgumentException e) {
             throw new IllegalArgumentException("Key file does not contain valid Base64-encoded data.", e);
         }
-        if (!(decodedKey.length == 16 || decodedKey.length == 24 || decodedKey.length == 32)) {
-            throw new IllegalArgumentException("AES key length is invalid: must be 16, 24, or 32 bytes, but found " + decodedKey.length);
+        if (!(key.length == 16 || key.length == 24 || key.length == 32)) {
+            throw new IllegalArgumentException("AES key length is invalid: must be 16, 24, or 32 bytes, but found " + key.length);
         }
 
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
@@ -101,7 +101,7 @@ public class AesCore {
             throw new IllegalStateException("No files found in cipher directory.");
         }
 
-        final SecretKeySpec secretKey = new SecretKeySpec(decodedKey, "AES");
+        final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
