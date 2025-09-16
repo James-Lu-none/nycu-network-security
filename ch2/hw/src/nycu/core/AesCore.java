@@ -14,6 +14,74 @@ public class AesCore {
     public static final String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
     public static final String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
     public static final String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
+    
+    private static File createNewEncryptionFolder(File baseDir) {
+        String timestamp = String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS", System.currentTimeMillis());
+        File newDir = new File(baseDir, "encrypted_" + timestamp);
+        if (!newDir.exists() && !newDir.mkdirs()) {
+            throw new RuntimeException("無法創建新的加密目錄: " + newDir.getPath());
+        }
+        return newDir;
+    }
+    
+    private static void encryptDirectory(SecretKeySpec secretKey, Cipher cipher, File sourceDir, File targetDir, String relativePath, Consumer<String> logConsumer) throws Exception {
+        File currentTargetDir = new File(targetDir, relativePath);
+        if (!currentTargetDir.exists() && !currentTargetDir.mkdirs()) {
+            throw new IllegalStateException("無法創建目標目錄: " + currentTargetDir);
+        }
+
+        File currentSourceDir = new File(sourceDir, relativePath);
+        File[] files = currentSourceDir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            String currentRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + File.separator + file.getName();
+            
+            if (file.isDirectory()) {
+                encryptDirectory(secretKey, cipher, sourceDir, targetDir, currentRelativePath, logConsumer);
+            } else {
+                byte[] fileBytes = Files.readAllBytes(file.toPath());
+                byte[] encrypted = cipher.doFinal(fileBytes);
+                String encoded = Base64.getEncoder().encodeToString(encrypted);
+
+                File outFile = new File(targetDir, currentRelativePath + ".enc");
+                Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
+                logConsumer.accept("已加密: " + currentRelativePath + " -> " + outFile.getName());
+            }
+        }
+    }
+    
+    private static void decryptDirectory(SecretKeySpec secretKey, Cipher cipher, File sourceDir, File targetDir, String relativePath, Consumer<String> logConsumer) throws Exception {
+        File currentTargetDir = new File(targetDir, relativePath);
+        if (!currentTargetDir.exists() && !currentTargetDir.mkdirs()) {
+            throw new IllegalStateException("無法創建目標目錄: " + currentTargetDir);
+        }
+
+        File currentSourceDir = new File(sourceDir, relativePath);
+        File[] files = currentSourceDir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            String currentRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + File.separator + file.getName();
+            
+            if (file.isDirectory()) {
+                decryptDirectory(secretKey, cipher, sourceDir, targetDir, currentRelativePath, logConsumer);
+            } else if (file.getName().endsWith(".enc")) {
+                String content = Files.readString(file.toPath());
+                byte[] encrypted = Base64.getDecoder().decode(content);
+                byte[] decrypted = cipher.doFinal(encrypted);
+                
+                String outFileName = currentRelativePath.substring(0, currentRelativePath.length() - 4); // 移除 .enc
+                File outFile = new File(targetDir, outFileName);
+                Files.write(outFile.toPath(), decrypted);
+                logConsumer.accept("已解密: " + currentRelativePath + " -> " + outFileName);
+            }
+        }
+    }
 
     public static String generateRandomAesKey(final int keyLength) {
         try {
@@ -41,38 +109,24 @@ public class AesCore {
         }
 
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
-            throw new IllegalArgumentException("Cipher directory is invalid.");
+            if (!cipherDir.mkdirs()) {
+                throw new IllegalArgumentException("無法創建加密目錄基礎路徑: " + cipherDir.getPath());
+            }
         }
         if (!dataDir.exists() || !dataDir.isDirectory()) {
             throw new IllegalArgumentException("Data directory is invalid.");
-        }
-
-        final File[] files = dataDir.listFiles();
-        if (files == null) {
-            throw new IllegalStateException("No files found in data directory.");
         }
 
         final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-        int count = 0;
-        for (final File file : files) {
-            if (!file.isFile()) {
-                continue;
-            }
-            final byte[] fileBytes = Files.readAllBytes(file.toPath());
-            final byte[] encrypted = cipher.doFinal(fileBytes);
-            final String encoded = Base64.getEncoder().encodeToString(encrypted);
-
-            final File outFile = new File(cipherDir, file.getName() + ".enc");
-            Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
-
-            logConsumer.accept("Encrypted: " + file.getName() + " -> " + outFile.getPath());
-            count++;
-        }
-
-        logConsumer.accept("Encryption finished. Total " + count + " file(s).");
+        // 在指定的加密目錄中創建新的時間戳記目錄
+        File newEncryptionDir = createNewEncryptionFolder(cipherDir);
+        logConsumer.accept("開始加密目錄: " + dataDir.getPath());
+        logConsumer.accept("加密檔案將儲存至: " + newEncryptionDir.getPath());
+        encryptDirectory(secretKey, cipher, dataDir, newEncryptionDir, "", logConsumer);
+        logConsumer.accept("加密完成.");
     }
 
     public static void decryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
@@ -96,33 +150,12 @@ public class AesCore {
             throw new IllegalArgumentException("Data directory is invalid.");
         }
 
-        final File[] files = cipherDir.listFiles();
-        if (files == null) {
-            throw new IllegalStateException("No files found in cipher directory.");
-        }
-
         final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
-
-        int count = 0;
-        for (final File file : files) {
-            if (!file.isFile() || !file.getName().endsWith(".enc")) {
-                continue;
-            }
-
-            final byte[] encodedBytes = Files.readAllBytes(file.toPath());
-            final byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
-            final byte[] decrypted = cipher.doFinal(encrypted);
-
-            final String baseName = file.getName().replaceFirst("\\.enc$", "");
-            final File outFile = new File(dataDir, baseName);
-            Files.write(outFile.toPath(), decrypted);
-
-            logConsumer.accept("Decrypted: " + file.getName() + " -> " + outFile.getPath());
-            count++;
-        }
-
-        logConsumer.accept("Decryption finished. Total " + count + " file(s) processed.");        
+        
+        logConsumer.accept("開始解密目錄: " + cipherDir.getPath());
+        decryptDirectory(secretKey, cipher, cipherDir, dataDir, "", logConsumer);
+        logConsumer.accept("解密完成.");
     }
 }
