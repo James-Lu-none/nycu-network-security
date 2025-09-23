@@ -15,14 +15,6 @@ public class AesCore {
     public static final String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
     public static final String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
     
-    private static File createNewEncryptionFolder(File baseDir) {
-        File newDir = new File(baseDir, "encrypted");
-        if (!newDir.exists() && !newDir.mkdirs()) {
-            throw new RuntimeException("Unable to create new encryption directory: " + newDir.getPath());
-        }
-        return newDir;
-    }
-    
     private static void encryptDirectory(SecretKeySpec secretKey, Cipher cipher, File sourceDir, File targetDir, String relativePath, Consumer<String> logConsumer) throws Exception {
         File currentTargetDir = new File(targetDir, relativePath);
         if (!currentTargetDir.exists() && !currentTargetDir.mkdirs()) {
@@ -120,11 +112,9 @@ public class AesCore {
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-        // Create new timestamped directory in the specified encryption directory
-        File newEncryptionDir = createNewEncryptionFolder(cipherDir);
         logConsumer.accept("Starting directory encryption: " + dataDir.getPath());
-        logConsumer.accept("Encrypted files will be stored in: " + newEncryptionDir.getPath());
-        encryptDirectory(secretKey, cipher, dataDir, newEncryptionDir, "", logConsumer);
+        logConsumer.accept("Encrypted files will be stored in: " + cipherDir.getPath());
+        encryptDirectory(secretKey, cipher, dataDir, cipherDir, "", logConsumer);
         logConsumer.accept("Encryption completed.");
     }
 
