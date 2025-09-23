@@ -14,6 +14,68 @@ public class AesCore {
     public static final String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
     public static final String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
     public static final String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
+    public static boolean enableRecursive;
+    
+    private static void encryptDirectory(SecretKeySpec secretKey, Cipher cipher, File sourceDir, File targetDir, String relativePath, Consumer<String> logConsumer) throws Exception {
+        File currentTargetDir = new File(targetDir, relativePath);
+        if (!currentTargetDir.exists() && !currentTargetDir.mkdirs()) {
+            throw new IllegalStateException("Unable to create target directory: " + currentTargetDir);
+        }
+
+        File currentSourceDir = new File(sourceDir, relativePath);
+        File[] files = currentSourceDir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            String currentRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + File.separator + file.getName();
+            
+            if (file.isDirectory()) {
+                if (!enableRecursive) return;
+                encryptDirectory(secretKey, cipher, sourceDir, targetDir, currentRelativePath, logConsumer);
+            } else {
+                byte[] fileBytes = Files.readAllBytes(file.toPath());
+                byte[] encrypted = cipher.doFinal(fileBytes);
+                String encoded = Base64.getEncoder().encodeToString(encrypted);
+
+                File outFile = new File(targetDir, currentRelativePath + ".enc");
+                Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
+                logConsumer.accept("Encrypted: " + currentRelativePath + " -> " + outFile.getName());
+            }
+        }
+    }
+    
+    private static void decryptDirectory(SecretKeySpec secretKey, Cipher cipher, File sourceDir, File targetDir, String relativePath, Consumer<String> logConsumer) throws Exception {
+        File currentTargetDir = new File(targetDir, relativePath);
+        if (!currentTargetDir.exists() && !currentTargetDir.mkdirs()) {
+            throw new IllegalStateException("Unable to create target directory: " + currentTargetDir);
+        }
+
+        File currentSourceDir = new File(sourceDir, relativePath);
+        File[] files = currentSourceDir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            String currentRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + File.separator + file.getName();
+            
+            if (file.isDirectory()) {
+                if (!enableRecursive) return;
+                decryptDirectory(secretKey, cipher, sourceDir, targetDir, currentRelativePath, logConsumer);
+            } else if (file.getName().endsWith(".enc")) {
+                String content = Files.readString(file.toPath());
+                byte[] encrypted = Base64.getDecoder().decode(content);
+                byte[] decrypted = cipher.doFinal(encrypted);
+                
+                String outFileName = currentRelativePath.substring(0, currentRelativePath.length() - 4); // Remove .enc
+                File outFile = new File(targetDir, outFileName);
+                Files.write(outFile.toPath(), decrypted);
+                logConsumer.accept("Decrypted: " + currentRelativePath + " -> " + outFileName);
+            }
+        }
+    }
 
     public static String generateRandomAesKey(final int keyLength) {
         try {
@@ -26,7 +88,7 @@ public class AesCore {
         }
     }
 
-    public static void encryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+    public static void encryptFiles(final String base64Key, final File dataDir, final File cipherDir, final boolean recursive ,final Consumer<String> logConsumer) throws Exception {
         if (base64Key == null || base64Key.isEmpty()) {
             throw new IllegalArgumentException("AES base64Key is missing.");
         }
@@ -41,41 +103,25 @@ public class AesCore {
         }
 
         if (!cipherDir.exists() || !cipherDir.isDirectory()) {
-            throw new IllegalArgumentException("Cipher directory is invalid.");
+            if (!cipherDir.mkdirs()) {
+                throw new IllegalArgumentException("Unable to create base encryption directory: " + cipherDir.getPath());
+            }
         }
         if (!dataDir.exists() || !dataDir.isDirectory()) {
             throw new IllegalArgumentException("Data directory is invalid.");
         }
-
-        final File[] files = dataDir.listFiles();
-        if (files == null) {
-            throw new IllegalStateException("No files found in data directory.");
-        }
-
+        enableRecursive = recursive;
         final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-        int count = 0;
-        for (final File file : files) {
-            if (!file.isFile()) {
-                continue;
-            }
-            final byte[] fileBytes = Files.readAllBytes(file.toPath());
-            final byte[] encrypted = cipher.doFinal(fileBytes);
-            final String encoded = Base64.getEncoder().encodeToString(encrypted);
-
-            final File outFile = new File(cipherDir, file.getName() + ".enc");
-            Files.write(outFile.toPath(), encoded.getBytes("UTF-8"));
-
-            logConsumer.accept("Encrypted: " + file.getName() + " -> " + outFile.getPath());
-            count++;
-        }
-
-        logConsumer.accept("Encryption finished. Total " + count + " file(s).");
+        logConsumer.accept("Starting directory encryption: " + dataDir.getPath());
+        logConsumer.accept("Encrypted files will be stored in: " + cipherDir.getPath());
+        encryptDirectory(secretKey, cipher, dataDir, cipherDir, "", logConsumer);
+        logConsumer.accept("Encryption completed.");
     }
 
-    public static void decryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+    public static void decryptFiles(final String base64Key, final File dataDir, final File cipherDir, final boolean recursive ,final Consumer<String> logConsumer) throws Exception {
         if (base64Key == null || base64Key.isEmpty()) {
             throw new IllegalArgumentException("AES base64Key is missing.");
         }
@@ -95,34 +141,13 @@ public class AesCore {
         if (!dataDir.exists() || !dataDir.isDirectory()) {
             throw new IllegalArgumentException("Data directory is invalid.");
         }
-
-        final File[] files = cipherDir.listFiles();
-        if (files == null) {
-            throw new IllegalStateException("No files found in cipher directory.");
-        }
-
+        enableRecursive = recursive;
         final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
-
-        int count = 0;
-        for (final File file : files) {
-            if (!file.isFile() || !file.getName().endsWith(".enc")) {
-                continue;
-            }
-
-            final byte[] encodedBytes = Files.readAllBytes(file.toPath());
-            final byte[] encrypted = Base64.getDecoder().decode(new String(encodedBytes, "UTF-8"));
-            final byte[] decrypted = cipher.doFinal(encrypted);
-
-            final String baseName = file.getName().replaceFirst("\\.enc$", "");
-            final File outFile = new File(dataDir, baseName);
-            Files.write(outFile.toPath(), decrypted);
-
-            logConsumer.accept("Decrypted: " + file.getName() + " -> " + outFile.getPath());
-            count++;
-        }
-
-        logConsumer.accept("Decryption finished. Total " + count + " file(s) processed.");        
+        
+        logConsumer.accept("Starting directory decryption: " + cipherDir.getPath());
+        decryptDirectory(secretKey, cipher, cipherDir, dataDir, "", logConsumer);
+        logConsumer.accept("Decryption completed.");
     }
 }

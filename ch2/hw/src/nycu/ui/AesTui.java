@@ -95,7 +95,7 @@ public final class AesTui {
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            encryptFiles(key, dataDir, cipherDir, System.out::println);
+            encryptFiles(key, dataDir, cipherDir, false, System.out::println);
         } catch (final Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
         }
@@ -107,7 +107,7 @@ public final class AesTui {
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            decryptFiles(key, dataDir, cipherDir, System.out::println);
+            decryptFiles(key, dataDir, cipherDir, false, System.out::println);
         } catch (final Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }
