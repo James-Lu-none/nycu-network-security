@@ -1,0 +1,67 @@
+* c42ca14 - (2 hours ago) update readme - James-Lu-none (HEAD -> main, origin/main, origin/HEAD)
+* 8612669 - (2 hours ago) update readme - James-Lu-none
+* b494258 - (2 hours ago) enable recursive encryption and decryption options in TUI - James-Lu-none
+* 9722aac - (3 hours ago) move readme and demo screen shots - James-Lu-none
+* 4e4a39e - (3 hours ago) Update README - James-Lu-none
+* 6684e13 - (3 hours ago) update readme - James-Lu-none
+*   1b1a25a - (3 hours ago) Merge branch 'feat/recursive_encrypt' - James-Lu-none
+|\  
+| * 574d339 - (6 hours ago) Add recursive parameter for TUI - James-Lu-none (origin/feat/recursive_encrypt, feat/recursive_encrypt)
+| * 598dbcc - (6 hours ago) add recursive parameter for gui - James-Lu-none
+| * b23493f - (6 hours ago) Add recursive encryption/decryption option in GUI - James-Lu-none
+| * 4307e7a - (6 hours ago) use cipherDir directly for encryption output - James-Lu-none
+| * 8adfb9b - (28 hours ago) remove timestep - matt44
+| * dc512fe - (7 days ago) Adds AES encryption/decryption core - matt44
+* |   cc46e98 - (3 hours ago) Merge branch 'feat/drag_file' - James-Lu-none
+|\ \  
+| * | 6313746 - (2 days ago) Update AesGui.java - ricky090652 (origin/feat/drag_file, feat/drag_file)
+| * | e6045aa - (2 days ago) Update readme.md - ricky090652
+| * | 8695dc6 - (3 days ago) Update readme.md - ricky090652 (origin/ricky090652-patch-1)
+| |/  
+* | 995bffe - (3 days ago) Add files via upload - ricky090652
+* | 458d195 - (3 days ago) Add files via upload - ricky090652
+* | 57585b1 - (3 days ago) Add files via upload - ricky090652
+|/  
+* e37dffd - (12 days ago) update parameter name - James-Lu-none
+* bd69af3 - (12 days ago) simplify action handlers - James-Lu-none
+* d39b43e - (12 days ago) refactor: change return type of encryptFiles and decryptFiles to void - James-Lu-none
+* f41dfa0 - (13 days ago) final if possible - James-Lu-none
+* ca8be45 - (13 days ago) fix parameter order and out file dir - James-Lu-none
+* ac03291 - (13 days ago) update error handling - James-Lu-none
+* 582b941 - (13 days ago) remove redundant log message - James-Lu-none
+* 35ca5a0 - (13 days ago) move key validation to core - James-Lu-none
+* 97568cb - (13 days ago) fix key base64 decoding issue - James-Lu-none
+* f9915bf - (13 days ago) fix scanner input - James-Lu-none
+* 2a12c90 - (13 days ago) remove unused class - James-Lu-none
+* 05470d3 - (13 days ago) update module-info.java - James-Lu-none
+* a38ac08 - (13 days ago) use english UI labels - James-Lu-none
+* 463eb94 - (13 days ago) clean up unused imports in AesGui and AesTui - James-Lu-none
+* 43724c4 - (13 days ago) refactor decryptor/encryptor with new core methods - James-Lu-none
+* 028b7ba - (13 days ago) move tui methods to AesTui class - James-Lu-none
+* 171a0a9 - (13 days ago) add encryptFiles method and refactor performEncryption in AesGui - James-Lu-none
+* c85691c - (13 days ago) simplify function performDecryption - James-Lu-none
+* 2563156 - (13 days ago) add decrypt files function with log consumer - James-Lu-none
+* c488a4a - (13 days ago) update key length values to match standard AES bit sizes - James-Lu-none
+* eb4981b - (13 days ago) add original generateRandomAesKey - James-Lu-none
+* 86acdf8 - (13 days ago) rename tools to core - James-Lu-none
+* d38a593 - (13 days ago) rename dir - James-Lu-none
+* aaaac97 - (13 days ago) remove loadEnvironmentVariables - James-Lu-none
+* 6aae029 - (13 days ago) move gui implementations to other class - James-Lu-none
+* ce25b01 - (13 days ago) make static value public - James-Lu-none
+* d88a0d1 - (13 days ago) move core methods to other class - James-Lu-none
+* a33f82d - (13 days ago) Add GUI - benhsu0828
+* f2de48b - (2 weeks ago) add config - James-Lu-none
+* adffae9 - (2 weeks ago) fix typo - James-Lu-none
+* 0be5657 - (2 weeks ago) add final is possible - James-Lu-none
+* b857e5e - (2 weeks ago) update demo file - James-Lu-none
+* 25c2a9f - (2 weeks ago) add feature generate key if not exist - James-Lu-none
+* 764673c - (2 weeks ago) update readme - James-Lu-none
+* 8c86282 - (2 weeks ago) add generateRandomAesKey function - James-Lu-none
+* 5b8c857 - (2 weeks ago) add demo data - James-Lu-none
+* ad311e7 - (2 weeks ago) reimplement decryptor - James-Lu-none
+* aa34741 - (2 weeks ago) reimplement encryptor - James-Lu-none
+* f095fb9 - (2 weeks ago) still create data dir if not exist - James-Lu-none
+* ced1009 - (2 weeks ago) refactor file to dir - James-Lu-none
+* fb3d72c - (2 weeks ago) update variable name - James-Lu-none
+* d25abd9 - (2 weeks ago) update readme.md - James-Lu-none
+* 47d9822 - (2 weeks ago) add files - James-Lu-none
