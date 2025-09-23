@@ -12,6 +12,11 @@ We choose AES to be our cryptosystem since we have already tried RSA in the clas
 
 ## The difficult points you've figured during implementation (Or where to you find such resources.)
 
+1. Implementing file I/O operations: We utilized Java's built-in libraries for file handling
+2. GUI development: We used Java Swing to create a user-friendly interface, importing and utilizing libraries such as `java.awt.*`, `javax.swing.*`, and drag-and-drop support (`DropTarget`, `DropTargetListener`, `DataFlavor`). We also handled file operations with `java.io.File` and `java.nio.file.Files`, and integrated AES core functions from our own package. Online resources and examples guided us in implementing features like file chooser dialogs, drag-and-drop, and responsive event handling.
+3. Error handling and logging: We implemented `Consumer<String> logConsumer` to refactor logging, allowing for flexible log output in both GUI and TUI modes.
+4. Environment variable management: We researched best practices for handling environment variables in Java applications.
+5. Recursive file processing: We implemented recursive directory traversal to handle files in nested directories.
 
 ## Additional features you've implemented
 
@@ -28,18 +33,19 @@ We choose AES to be our cryptosystem since we have already tried RSA in the clas
 * Clear log button for log management
 
 ![GUI_interface](./GUI_interface.png)
-
-### Generate 16 bytes Key
-
+Generate 16 bytes Key
 ![GUI_genkey](./GUI_genkey.png)
-
-### Encrypt File
-
+Encrypt File
 ![GUI_ecryptfile](./encryptfile.png)
-
-### Decrypt File
-
+Decrypt File
 ![GUI_decryptfile](./decryptfile.png)
+
+### Feature of TUI Mode
+
+* Support recursive file encryption and decryption as an option
+* Automatic environment variable detection and loading for key and directory paths
+* Automatic aes key generation
+* Showing detailed error messages during operations
 
 ## The contribution table of each group members
 
