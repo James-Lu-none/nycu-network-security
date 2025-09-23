@@ -9,6 +9,7 @@ The application supports the use of environment variables for configuration, mak
 ### Feature of GUI Mode
 * User-friendly interface to configure AES key file, data directory, and cipher output directory
 * Supports file and directory selection using native system file chooser dialogs (JFileChooser)
+* Support recursive file encryption and decryption as an option
 * Allows direct drag-and-drop of files or folders from the system file explorer into the input fields for quick path setting
 * Automatic environment variable detection and loading for key and directory paths with toggle option
 * Encryption and decryption operation buttons that enable multi-threaded processing
