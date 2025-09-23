@@ -8,6 +8,14 @@ import java.nio.file.Files;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import static nycu.core.AesCore.*;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetListener;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.util.List;
+import java.awt.datatransfer.DataFlavor;
+
 public class AesGui extends JFrame {
 
     // all your UI components here
@@ -20,6 +28,29 @@ public class AesGui extends JFrame {
     private final JComboBox<String> keyLengthComboBox;
     private final JCheckBox useEnvVarsCheckBox;
     private final JLabel envStatusLabel;
+    
+    private void enableFileDrop(JTextField textField) {
+        new DropTarget(textField, new DropTargetListener() {
+            @Override public void dragEnter(DropTargetDragEvent dtde) {}
+            @Override public void dragOver(DropTargetDragEvent dtde) {}
+            @Override public void dropActionChanged(DropTargetDragEvent dtde) {}
+            @Override public void dragExit(DropTargetEvent dte) {}
+            @Override
+            public void drop(DropTargetDropEvent dtde) {
+                try {
+                    dtde.acceptDrop(dtde.getDropAction());
+                    List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                    if (droppedFiles != null && !droppedFiles.isEmpty()) {
+                        File file = droppedFiles.get(0);
+                        textField.setText(file.getAbsolutePath());
+                    }
+                    dtde.dropComplete(true);
+                } catch (Exception ex) {
+                    dtde.dropComplete(false);
+                }
+            }
+        });
+    }
 
     public AesGui() {
         keyFilePathField = new JTextField();
@@ -31,6 +62,13 @@ public class AesGui extends JFrame {
         keyLengthComboBox = new JComboBox<>(new String[]{"16 chars", "24 chars", "32 chars"});
         useEnvVarsCheckBox = new JCheckBox("Auto Use Environment Variables");
         envStatusLabel = new JLabel();
+        
+        keyFilePathField.setDragEnabled(true);
+        dataDirField.setDragEnabled(true);
+        cipherDirField.setDragEnabled(true);
+        enableFileDrop(keyFilePathField);
+        enableFileDrop(dataDirField);
+        enableFileDrop(cipherDirField);
 
         initializeGUI();
         checkAndUpdateEnvironmentVariables();
@@ -490,3 +528,5 @@ public class AesGui extends JFrame {
         }
     }
 }
+
+
