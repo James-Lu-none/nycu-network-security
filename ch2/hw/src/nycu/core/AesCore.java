@@ -14,6 +14,7 @@ public class AesCore {
     public static final String AES_KEY_FILE_PATH_ENV_NAME = "AES_KEY_FILE_PATH";
     public static final String AES_DATA_DIR_ENV_NAME = "AES_DATA_DIR";
     public static final String AES_CIPHER_DIR_ENV_NAME = "AES_CIPHER_DIR";
+    public static boolean enableRecursive;
     
     private static void encryptDirectory(SecretKeySpec secretKey, Cipher cipher, File sourceDir, File targetDir, String relativePath, Consumer<String> logConsumer) throws Exception {
         File currentTargetDir = new File(targetDir, relativePath);
@@ -31,6 +32,7 @@ public class AesCore {
             String currentRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + File.separator + file.getName();
             
             if (file.isDirectory()) {
+                if (!enableRecursive) return;
                 encryptDirectory(secretKey, cipher, sourceDir, targetDir, currentRelativePath, logConsumer);
             } else {
                 byte[] fileBytes = Files.readAllBytes(file.toPath());
@@ -60,6 +62,7 @@ public class AesCore {
             String currentRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + File.separator + file.getName();
             
             if (file.isDirectory()) {
+                if (!enableRecursive) return;
                 decryptDirectory(secretKey, cipher, sourceDir, targetDir, currentRelativePath, logConsumer);
             } else if (file.getName().endsWith(".enc")) {
                 String content = Files.readString(file.toPath());
@@ -85,7 +88,7 @@ public class AesCore {
         }
     }
 
-    public static void encryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+    public static void encryptFiles(final String base64Key, final File dataDir, final File cipherDir, final boolean recursive ,final Consumer<String> logConsumer) throws Exception {
         if (base64Key == null || base64Key.isEmpty()) {
             throw new IllegalArgumentException("AES base64Key is missing.");
         }
@@ -107,7 +110,7 @@ public class AesCore {
         if (!dataDir.exists() || !dataDir.isDirectory()) {
             throw new IllegalArgumentException("Data directory is invalid.");
         }
-
+        enableRecursive = recursive;
         final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -118,7 +121,7 @@ public class AesCore {
         logConsumer.accept("Encryption completed.");
     }
 
-    public static void decryptFiles(final String base64Key, final File dataDir, final File cipherDir, final Consumer<String> logConsumer) throws Exception {
+    public static void decryptFiles(final String base64Key, final File dataDir, final File cipherDir, final boolean recursive ,final Consumer<String> logConsumer) throws Exception {
         if (base64Key == null || base64Key.isEmpty()) {
             throw new IllegalArgumentException("AES base64Key is missing.");
         }
@@ -138,7 +141,7 @@ public class AesCore {
         if (!dataDir.exists() || !dataDir.isDirectory()) {
             throw new IllegalArgumentException("Data directory is invalid.");
         }
-
+        enableRecursive = recursive;
         final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
         final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);

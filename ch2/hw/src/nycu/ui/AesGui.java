@@ -486,7 +486,7 @@ public class AesGui extends JFrame {
                     final File cipherDir = new File(getEffectiveCipherDir());
                     final File dataDir = new File(getEffectiveDataDir());
 
-                    encryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                    encryptFiles(key, dataDir, cipherDir, enableRecursiveCheckBox.isSelected(), AesGui.this::appendLog);
                 } catch (Exception ex) {
                     appendLog("Error during encryption: " + ex.getMessage());
                 } finally {
@@ -508,7 +508,7 @@ public class AesGui extends JFrame {
                     final File cipherDir = new File(getEffectiveCipherDir());
                     final File dataDir = new File(getEffectiveDataDir());
 
-                    decryptFiles(key, dataDir, cipherDir, AesGui.this::appendLog);
+                    decryptFiles(key, dataDir, cipherDir, enableRecursiveCheckBox.isSelected(), AesGui.this::appendLog);
                 } catch (Exception ex) {
                     appendLog("Error during decryption: " + ex.getMessage());
                 } finally {
