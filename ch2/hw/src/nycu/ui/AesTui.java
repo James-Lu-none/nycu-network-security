@@ -8,6 +8,7 @@ import static nycu.core.AesCore.*;
 public final class AesTui {
 
     public static final int AES_KEY_LENGTH = 256;
+    public static boolean recursive;
     public static final Scanner input = new Scanner(System.in);
 
     public static String getAesKey() {
@@ -89,25 +90,33 @@ public final class AesTui {
         return dir;
     }
 
+    public static void askEnableRecursive(){
+        System.out.println("Do you want to encrypt/decrypt files recursively? (y/n)");
+        final String choice = input.nextLine();
+        recursive = "y".equals(choice);
+    }
+
     public static void encryptor() {
+        askEnableRecursive();
         try {
             final String key = getAesKey();
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            encryptFiles(key, dataDir, cipherDir, false, System.out::println);
+            encryptFiles(key, dataDir, cipherDir, recursive, System.out::println);
         } catch (final Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
         }
     }
 
     public static void decryptor() {
+        askEnableRecursive();
         try {
             final String key = getAesKey();
             final File dataDir = getDataDir();
             final File cipherDir = getCipherDir();
 
-            decryptFiles(key, dataDir, cipherDir, false, System.out::println);
+            decryptFiles(key, dataDir, cipherDir, recursive, System.out::println);
         } catch (final Exception e) {
             System.out.println("Error during decryption: " + e.getMessage());
         }
