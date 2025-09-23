@@ -12,9 +12,9 @@ The application supports the use of environment variables for configuration, mak
 * Support recursive file encryption and decryption as an option
 * Allows direct drag-and-drop of files or folders from the system file explorer into the input fields for quick path setting
 * Automatic environment variable detection and loading for key and directory paths with toggle option
-* Encryption and decryption operation buttons that enable multi-threaded processing
-* Real-time log display area showing detailed status updates and error messages during operations
+* Automatic aes key generation
 * Key length selection combobox with options for 128, 192, and 256-bit AES keys
+* Real-time log display area showing detailed status updates and error messages during operations
 * Clear log button for log management
 
 ![GUI_interface](https://github.com/James-Lu-none/nycu-network-security/blob/main/ch2/GUI_interface.png)
@@ -39,19 +39,22 @@ The application supports the use of environment variables for configuration, mak
 
 ## build
 
-```
+```bash
 javac -d bin src/nycu/**/*.java
 ```
 
 ## run
 
-```
-java -cp bin nycu.main.hasher
+```bash
+# GUI mode
+java -cp bin nycu.main.aeser
+# TUI mode
+java -cp bin nycu.main.aeser console
 ```
 
-## set up env
+## set up env (linux)
 
-```
+```bash
 export AES_KEY_FILE_PATH=key
 export AES_DATA_DIR=data
 export AES_CIPHER_DIR=cipher
@@ -59,6 +62,6 @@ export AES_CIPHER_DIR=cipher
 
 ## working java container
 
-```
+```bash
 docker run -v ./hw:/app/hw -it openjdk:21-jdk-slim bash
 ```
