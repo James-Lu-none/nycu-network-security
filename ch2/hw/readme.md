@@ -1,12 +1,15 @@
 # Chapter 2 - Cryptography Fundamentals
+
 This project is developed in Java and provides a complete solution for batch file encryption and decryption using the Advanced Encryption Standard (AES) algorithm. It supports AES-128, AES-192, and AES-256 with flexible key generation and management.
 
 Key features include a graphical user interface (GUI) for easy interactive operations, as well as a console mode that enables scripting and automation. The tool allows users to generate secure random AES keys (stored as Base64), encrypt or decrypt all files in a specified source directory, and output results to a designated target directory. We also display real-time logs in the GUI, showing detailed status messages and errors during encryption/decryption processes
 
-The application supports the use of environment variables for configuration, making it easy to integrate into automated workflows or containerized environments, such as Docker. Additionally, it is compatible with major desktop platforms (Windows, Linux, macOS) and can run inside a Java development container. 
+The application supports the use of environment variables for configuration, making it easy to integrate into automated workflows or containerized environments, such as Docker. Additionally, it is compatible with major desktop platforms (Windows, Linux, macOS) and can run inside a Java development container.
 
 ## GUI Mode
+
 ### Feature of GUI Mode
+
 * User-friendly interface to configure AES key file, data directory, and cipher output directory
 * Supports file and directory selection using native system file chooser dialogs (JFileChooser)
 * Support recursive file encryption and decryption as an option
@@ -17,25 +20,19 @@ The application supports the use of environment variables for configuration, mak
 * Real-time log display area showing detailed status updates and error messages during operations
 * Clear log button for log management
 
-![GUI_interface](https://github.com/James-Lu-none/nycu-network-security/blob/main/ch2/GUI_interface.png)
+![GUI_interface](./GUI_interface.png)
 
 ### Generate 16 bytes Key
 
-![GUI_genkey](https://github.com/James-Lu-none/nycu-network-security/blob/main/ch2/GUI_genkey.png)
+![GUI_genkey](./GUI_genkey.png)
 
 ### Encrypt File
 
-![GUI_ecryptfile](https://github.com/James-Lu-none/nycu-network-security/blob/main/ch2/encryptfile.png)
+![GUI_ecryptfile](./encryptfile.png)
 
 ### Decrypt File
 
-![GUI_decryptfile](https://github.com/James-Lu-none/nycu-network-security/blob/main/ch2/decryptfile.png)
-
-
-## Console Mode
-
-
-
+![GUI_decryptfile](./decryptfile.png)
 
 ## build
 
