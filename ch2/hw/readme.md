@@ -6,7 +6,14 @@ Key features include a graphical user interface (GUI) for easy interactive opera
 
 The application supports the use of environment variables for configuration, making it easy to integrate into automated workflows or containerized environments, such as Docker. Additionally, it is compatible with major desktop platforms (Windows, Linux, macOS) and can run inside a Java development container.
 
-## GUI Mode
+## Introduction of why you decide to use this cryptosystem instead of others
+
+We choose AES to be our cryptosystem since we have already tried RSA in the class.
+
+## The difficult points you've figured during implementation (Or where to you find such resources.)
+
+
+## Additional features you've implemented
 
 ### Feature of GUI Mode
 
@@ -33,6 +40,15 @@ The application supports the use of environment variables for configuration, mak
 ### Decrypt File
 
 ![GUI_decryptfile](./decryptfile.png)
+
+## The contribution table of each group members
+
+314581007 吳念澤: implementation of AesCore.java
+314581019 李紹民: working on other group assignment
+314581025 徐葆驊: implementation of AesGui.java
+314581029 盧楷勛: implementation of AesCore.java, refactoring and writing readme
+314581038 林芮齊: improvement of AesGui.java and writing readme
+314706023 何孟修: working on other group assignment
 
 ## build
 
