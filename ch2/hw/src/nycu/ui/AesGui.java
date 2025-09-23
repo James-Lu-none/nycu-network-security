@@ -19,6 +19,7 @@ public class AesGui extends JFrame {
     private final JButton decryptButton;
     private final JComboBox<String> keyLengthComboBox;
     private final JCheckBox useEnvVarsCheckBox;
+    private final JCheckBox enableRecursiveCheckBox;
     private final JLabel envStatusLabel;
 
     public AesGui() {
@@ -30,6 +31,7 @@ public class AesGui extends JFrame {
         decryptButton = new JButton("Decrypt Files");
         keyLengthComboBox = new JComboBox<>(new String[]{"16 chars", "24 chars", "32 chars"});
         useEnvVarsCheckBox = new JCheckBox("Auto Use Environment Variables");
+        enableRecursiveCheckBox = new JCheckBox("Enable Recursive Encryption and decryption");
         envStatusLabel = new JLabel();
 
         initializeGUI();
@@ -150,9 +152,25 @@ public class AesGui extends JFrame {
         refreshEnvButton.addActionListener(e -> checkAndUpdateEnvironmentVariables());
         configPanel.add(refreshEnvButton, gbc);
 
-        // Key Length Selection
+        // Encrypt decrypt recursively Control
         gbc.gridx = 0;
         gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.WEST;
+        configPanel.add(new JLabel("Recursively:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        final JPanel recursivelyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+        enableRecursiveCheckBox.addActionListener(e -> toggleEnableRecursive());
+        recursivelyPanel.add(enableRecursiveCheckBox);
+
+        configPanel.add(recursivelyPanel, gbc);
+
+        // Key Length Selection
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.WEST;
         configPanel.add(new JLabel("Key Length:"), gbc);
 
@@ -288,6 +306,16 @@ public class AesGui extends JFrame {
         } else {
             // User chooses not to use env vars
             appendLog("Disabled auto-loading of environment variables, will use manual input paths");
+        }
+    }
+
+    // Toggle enable recursive
+    private void toggleEnableRecursive() {
+        if(enableRecursiveCheckBox.isSelected())
+        {
+            appendLog("Enabled recursive encryption and decryption");
+        } else {
+            appendLog("Disabled Recursive encryption and decryption");
         }
     }
 
