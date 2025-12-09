@@ -130,7 +130,7 @@ Host script results:
 |_  message_signing: disabled (dangerous, but default)
 ```
 
-## Attempt 1: 445/tcp   open  microsoft-ds         Windows Server 2008 R2 Standard 7601 Service Pack 1 microsoft-ds
+## Attempt 1: MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
 
 ```bash
 msf exploit(windows/smb/ms17_010_eternalblue) > search EternalBlue
