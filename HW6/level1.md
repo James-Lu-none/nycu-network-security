@@ -75,7 +75,7 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 57.87 seconds
 ```
 
-## sql injection and ssh
+## Attempt 1: sql injection and ssh
 
 sql injection to get user `leia_organa`'s password, then ssh to the machine and escalate to root.
 
@@ -176,7 +176,7 @@ root@SEC-NYCU-PMELin:/home/leia_organa# whoami
 root
 ```
 
-## Attemp 2: proftpd
+## Attempt 2: proftpd
 
 ```
 [*] No payload configured, defaulting to cmd/unix/reverse_netcat
@@ -372,7 +372,8 @@ www-data
 
 
 ```
-## Attemp 3: drupal
+
+## Attempt 3: drupal
 ```
 msf exploit(unix/webapp/drupal_coder_exec) > show options
 
