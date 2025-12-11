@@ -1,5 +1,9 @@
 # Homework 7 - [Group Assignment] Shadow IT and WiFi MiTM
 
+## Part 1: Shadow IT Detection
+
+
+
 ## Part 2: Fake AP and MITM Attack
 
 ### step 1: Setting up the AP on Attacker's Device (pi5)
