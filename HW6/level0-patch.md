@@ -23,6 +23,15 @@ Samba 3.0.20 is vulnerable to the **`usermap_script` command execution** vulnera
     * Given the age of the 3.0.x series, the best practice is to upgrade to the latest stable branch (e.g., Samba 4.x), as it contains numerous other security and stability improvements.
     * **If Immediate Upgrade Is Impossible (Temporary Mitigation):** Disable the **`username map`** functionality in the Samba configuration file (`smb.conf`) to temporarily block the exploit vector, or set the `username map` file to be unreadable by the Samba process.
 
+### C. UnrealIRCd 3.2.8.1 Backdoor (Port 6667)
+
+This vulnerability (CVE-2010-2075) was caused by a Supply Chain Attack. The official download mirrors for UnrealIRCd were compromised in 2009, and the source code archive was replaced with a version containing a malicious backdoor. This allowed attackers to execute system commands with the privileges of the user running the IRC daemon
+
+* **The Fix:**
+    * Immediate Action: Upgrade or Reinstall using a verified source. The specific version installed (3.2.8.1) is the compromised release.
+    * The latest stable version of UnrealIRCd is significantly more secure. Use your distribution's package manager to install the absolute newest version available.
+    * **Alternative:** Migrate to a different, modern, and actively maintained IRC server software that does not have known vulnerabilities.
+
 ---
 
 ## 2. Managerial Answers (Security Rules & Policies)
