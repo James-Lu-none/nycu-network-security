@@ -1,4 +1,4 @@
-# Level 1 (Windows)
+# Level 1 (Windows) (BLUE TEAM)
 
 The successful exploits were:
 

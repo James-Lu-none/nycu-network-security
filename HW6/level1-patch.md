@@ -1,4 +1,4 @@
-# Level 1 (Linux)
+# Level 1 (Linux) (BLUE TEAM)
 
 ## patch 1: sql injection and ssh
 **1.1 Gain Root Access**  

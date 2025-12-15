@@ -1,4 +1,4 @@
-# Level 0 (Metaexploitable2)
+# Level 0 (Metaexploitable2) (RED TEAM)
 
 ## nmap scan results
 

@@ -1,4 +1,4 @@
-# Level 0 (Metaexploitable2)
+# Level 0 (Metaexploitable2) (BLUE TEAM)
 
 
 ## 1. Technical Fixes (Prevent the Vulnerability)
