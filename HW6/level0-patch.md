@@ -1,7 +1,7 @@
 # Level 0 (Metaexploitable2)
 
 
-## 1. 🛡️ Technical Fixes (Prevent the Vulnerability)
+## 1. Technical Fixes (Prevent the Vulnerability)
 
 The primary cause of the exploits is the use of **severely outdated and vulnerable software versions**. The definitive fix is to update or replace the services.
 
@@ -25,7 +25,7 @@ Samba 3.0.20 is vulnerable to the **`usermap_script` command execution** vulnera
 
 ---
 
-## 2. 📝 Managerial Answers (Security Rules & Policies)
+## 2. Managerial Answers (Security Rules & Policies)
 
 These policies are critical for preventing similar issues and managing the environment's security posture.
 

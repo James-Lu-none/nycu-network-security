@@ -7,7 +7,7 @@ The successful exploits were:
 
 ---
 
-## 1. 🛡️ Technical Fixes (Prevent the Vulnerability)
+## 1. Technical Fixes (Prevent the Vulnerability)
 
 The underlying cause for both successful exploits is the use of severely outdated and unpatched software.
 
@@ -31,7 +31,7 @@ The Nmap scan identified the service on port 9200 as **ElasticSearch version 1.1
 
 ---
 
-## 2. 📝 Managerial Answers (Security Rules & Policies)
+## 2. Managerial Answers (Security Rules & Policies)
 
 These policies are necessary to prevent a recurrence of these critical failures.
 
